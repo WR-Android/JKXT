@@ -11,8 +11,8 @@ public class Models extends LitePalSupport {
 
     private int id;     //设备ID
     private String model_name;
-    private String action_name;     //操作名称-->(mode)mode1 mode2 mode3 ...  (input)CV1 CV2 HDMI VGA1 VGA2 ...
-    // (check) check_signal_1_state check_signal_2_state ...
+    private String action_name;     //操作名称-->(mode)mode1 mode2 mode3 ...  (input)CV1 CV2 HDMI VGA1 VGA2 ...(check) check_state_1 ...
+
     private String send_data;       //操作发送协议
     private String return_data;     //操作返回协议
 
@@ -72,7 +72,7 @@ public class Models extends LitePalSupport {
 
         data = new Models();
         data.setModel_name("880");
-        data.setAction_name("check_signal_1_state");
+        data.setAction_name("check_state_1");
         data.setSend_data("E9_01_92_01_00_7D_0D_0A");
         data.setReturn_data("E9_01_92_01_01_7E_0D_0A");
         data.save();

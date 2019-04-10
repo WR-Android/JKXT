@@ -6,6 +6,11 @@ package wang.com.jkxttest;
 
 public class DataInfo {
 
+    //数据库的名称
+    public final static String DB_NAME = "Agreement.db";
+    //数据库的地址
+    public final static String DB_PATH = "/data/data/wang.com.jkxttest/databases/";
+
     public static String server_ip = "";
     public static int server_port = 20108;
     public static String model_number = "600";

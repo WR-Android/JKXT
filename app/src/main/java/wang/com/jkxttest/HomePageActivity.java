@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import org.litepal.LitePal;
 
+import java.io.File;
 import java.util.List;
 
 import agreement.Models;
@@ -34,11 +35,18 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private Button btn_6;
     private Button btn;
     private EditText et_ip;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
-        create_database();      //初始化数据库
+        if (!(new File(DataInfo.DB_PATH + DataInfo.DB_NAME).exists())) {
+            Log.e(TAG, "===创建了数据库===");
+            create_database();      //初始化数据库
+        }
+        else{
+            Log.e(TAG, "===数据库已存在 没有创建数据库===");
+        }
         initView();     //初始化控件
         if (TextUtils.isEmpty(et_ip.getText())) {
             Toast.makeText(this, "IP不能为空", Toast.LENGTH_SHORT).show();
@@ -48,11 +56,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         DataInfo.server_port = 20108;
 
         List<Models> device_list = LitePal.where("action_name = ?", "Device").find(Models.class);
-//        UDPThread UDPThread = new UDPThread();
-//        UDPThread.start();
-
         byte[] data = StrToHexByte(device_list.get(0).getSend_data(), "_");
-        UDPThread sendThread= new UDPThread();
+        UDPThread sendThread = new UDPThread();
         sendThread.setData(data);
         sendThread.start();
         //while (!DataInfo.ConnectionState) {
