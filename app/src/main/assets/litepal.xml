@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="Agreement" />
+    <version value="1" />
+    <list>
+        <mapping class="agreement.Models"></mapping>
+    </list>
+    <!--<storage value="WR/database"/>-->
+</litepal>
