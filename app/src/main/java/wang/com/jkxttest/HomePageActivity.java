@@ -1,6 +1,8 @@
 package wang.com.jkxttest;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,12 +12,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
+
 import org.litepal.LitePal;
 
 import java.io.File;
 import java.util.List;
 
 import agreement.Models;
+import mThread.CheckConnectThread;
+import mThread.TimeThread;
 import mThread.UDPThread;
 
 import static agreement.Models.create_database;
@@ -23,7 +29,7 @@ import static wang.com.jkxttest.DataInfo.StrToHexByte;
 
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //public static Handler mHandler;
+    public static Handler mHandler;
     private static final String TAG = "HomePageActivity";
     private TextView tv_send;
     private TextView tv_receive;
@@ -35,16 +41,17 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private Button btn_6;
     private Button btn;
     private EditText et_ip;
+    private TextView tv_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.init().hideThreadInfo();
         setContentView(R.layout.activity_homepage);
         if (!(new File(DataInfo.DB_PATH + DataInfo.DB_NAME).exists())) {
             Log.e(TAG, "===创建了数据库===");
             create_database();      //初始化数据库
-        }
-        else{
+        } else {
             Log.e(TAG, "===数据库已存在 没有创建数据库===");
         }
         initView();     //初始化控件
@@ -55,23 +62,17 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         DataInfo.server_ip = et_ip.getText().toString().trim();
         DataInfo.server_port = 20108;
 
-        List<Models> device_list = LitePal.where("action_name = ?", "Device").find(Models.class);
-        byte[] data = StrToHexByte(device_list.get(0).getSend_data(), "_");
-        UDPThread sendThread = new UDPThread();
-        sendThread.setData(data);
-        sendThread.start();
-        //while (!DataInfo.ConnectionState) {
-//        for (Models x : device_list) {
-//            sendThread = new UDPThread();
-//            byte[] data = StrToHexByte(x.getSend_data(), "_");
-//            sendThread.setData(data);
-//            sendThread.start();
-//        }
-        //}
+        new CheckConnectThread().start();
+        new TimeThread().start();
         Toast.makeText(this, "当前连接设备：" + DataInfo.model_number, Toast.LENGTH_SHORT).show();
     }
 
+    private void initdata(){
+
+    }
+
     private void initView() {
+        tv_time = (TextView) findViewById(R.id.tv_time);
         tv_send = (TextView) findViewById(R.id.tv_send);
         tv_receive = (TextView) findViewById(R.id.tv_receive);
         et_ip = (EditText) findViewById(R.id.et_ip);
@@ -89,6 +90,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btn_5.setOnClickListener(this);
         btn_6.setOnClickListener(this);
         btn.setOnClickListener(this);
+        MyHandler();
     }
 
     @Override
@@ -115,6 +117,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn:
                 List<Models> find = LitePal.findAll(Models.class);
                 for (Models m : find) {
+
+                    Logger.d("model id is " + m.getId());
                     Log.d(TAG, "model id is " + m.getId());
                     Log.d(TAG, "model name is " + m.getModel_name());
                     Log.d(TAG, "action name is " + m.getAction_name());
@@ -136,33 +140,28 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             sendThread.setData(data);
             sendThread.start();
         }
-        if (DataInfo.ConnectionState)
-            tv_receive.setText("连接成功");
-        else
-            tv_receive.setText("连接失败");
     }
 
-//    public void MyHandler() {
-//        mHandler = new Handler() {
-//            @Override
-//            public void handleMessage(Message msg) {
-//                super.handleMessage(msg);
-//                switch (msg.what) {
-//                    case DataInfo.RECEIVED_DATA:
-//                        String data = msg.getData().getString("data");
-//                        List<Models> list = LitePal.where("model = ? and return_data = ?", DataInfo.model_number, data).find(Models.class);
-//                        if (!list.isEmpty()) {
-//
-//                        }
-//                        break;
-//                    case 2:
-//
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-//        };
-//    }
+    public void MyHandler() {
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    case DataInfo.UPDATACURRENTTIME:
+                        tv_time.setText(msg.getData().getString("time"));
+                        break;
+                    case DataInfo.CONNECTED:
+                        tv_receive.setText("连接成功");
+                        break;
+                    case DataInfo.DISCONNECTED:
+                        tv_receive.setText("断开连接");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+    }
 
 }
