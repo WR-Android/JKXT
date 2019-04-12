@@ -13,11 +13,11 @@ public class DataInfo {
 
     public static String server_ip = "";
     public static int server_port = 20108;
-    public static String model_number = "600";
+    public static String model_number = "";
     public static boolean ConnectionState = false;
     public static int agreement_len = 8;
     public static final int UPDATACURRENTTIME = 1;
-    public static final int CONNECTED = 2;
+    public static final int NEWCONNECT = 2;
     public static final int DISCONNECTED = 3;
 
 

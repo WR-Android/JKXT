@@ -8,7 +8,6 @@ import org.litepal.LitePal;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class UDPReceiveThread extends Thread {
                 DataInfo.ConnectionState = true;  //连接成功
                 LastCheckConnectDate = new Date(System.currentTimeMillis());
                 Message msg = HomePageActivity.mHandler.obtainMessage();
-                msg.what = DataInfo.CONNECTED;
+                msg.what = DataInfo.NEWCONNECT;
                 HomePageActivity.mHandler.sendMessage(msg);
             }
         }

@@ -6,13 +6,33 @@
     android:orientation="vertical"
     tools:context="wang.com.jkxttest.HomePageActivity">
 
-    <EditText
-        android:id="@+id/et_ip"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="IP:"
-        android:text="192.168.1.223"
-        android:textSize="18sp" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="IP:"
+            android:textSize="18sp"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/et_ip"
+
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="192.168.1.223"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查询" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -30,7 +50,6 @@
             android:id="@+id/tv_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="null"
             android:textColor="#666666"
             android:textSize="18sp" />
     </LinearLayout>
@@ -51,66 +70,94 @@
             android:id="@+id/tv_receive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="null"
             android:textColor="#666666"
             android:textSize="18sp" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CV1" />
-
-    <Button
-        android:id="@+id/btn_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="CV2" />
-
-    <Button
-        android:id="@+id/btn_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="VGA" />
-
-    <Button
-        android:id="@+id/btn_4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="DVI" />
-
-    <Button
-        android:id="@+id/btn_5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="HDMI" />
-
-    <Button
-        android:id="@+id/btn_6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="USB" />
-
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="查询" />
-
-    <TextView
-        android:id="@+id/tv_time"
+    <LinearLayout
+        android:id="@+id/LL_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Time"
-        android:gravity="center_horizontal"
-        android:textSize="20sp" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+             />
+
+        <Button
+            android:id="@+id/btn_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+             />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+             />
+
+        <Button
+            android:id="@+id/btn_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+             />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LL_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+             />
+
+        <Button
+            android:id="@+id/btn_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+             />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:text="Time"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

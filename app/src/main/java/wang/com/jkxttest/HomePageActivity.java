@@ -4,13 +4,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
@@ -42,32 +40,47 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private Button btn;
     private EditText et_ip;
     private TextView tv_time;
+    List<Models> input_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.init().hideThreadInfo();
         setContentView(R.layout.activity_homepage);
-        if (!(new File(DataInfo.DB_PATH + DataInfo.DB_NAME).exists())) {
+        if (!(new File(DataInfo.DB_PATH + DataInfo.DB_NAME).exists())) {    //判断数据库文件是否已存在
             Log.e(TAG, "===创建了数据库===");
             create_database();      //初始化数据库
         } else {
             Log.e(TAG, "===数据库已存在 没有创建数据库===");
         }
         initView();     //初始化控件
-        if (TextUtils.isEmpty(et_ip.getText())) {
-            Toast.makeText(this, "IP不能为空", Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if (TextUtils.isEmpty(et_ip.getText())) {
+//            Toast.makeText(this, "IP不能为空", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
         DataInfo.server_ip = et_ip.getText().toString().trim();
         DataInfo.server_port = 20108;
 
-        new CheckConnectThread().start();
-        new TimeThread().start();
-        Toast.makeText(this, "当前连接设备：" + DataInfo.model_number, Toast.LENGTH_SHORT).show();
+        new TimeThread().start();   //开时钟线程
+        new CheckConnectThread().start();   //开设备连接线程
+
+        if (!DataInfo.ConnectionState) {
+            //加载默认主界面布局
+        }
     }
 
-    private void initdata(){
+    private void update_input_view() {
+        //找到当前设备的端口信息
+        input_list = LitePal.where("model_name = ? and action_type = ?", DataInfo.model_number, "input").find(Models.class);
+        if (!input_list.isEmpty()) {
+            Logger.e("刷新按钮控件");
+            btn_1.setText(input_list.get(0).getAction_name());
+            btn_2.setText(input_list.get(1).getAction_name());
+            btn_3.setText(input_list.get(2).getAction_name());
+            btn_4.setText(input_list.get(3).getAction_name());
+            btn_5.setText(input_list.get(4).getAction_name());
+            btn_6.setText(input_list.get(5).getAction_name());
+        }
 
     }
 
@@ -97,35 +110,37 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_1:
-                ChangeInput("CV1");
+                ChangeInput(input_list.get(0).getAction_name());
                 break;
             case R.id.btn_2:
-                ChangeInput("CV2");
+                ChangeInput(input_list.get(1).getAction_name());
                 break;
             case R.id.btn_3:
-                ChangeInput("VGA");
+                ChangeInput(input_list.get(2).getAction_name());
                 break;
             case R.id.btn_4:
-                ChangeInput("DVI");
+                ChangeInput(input_list.get(3).getAction_name());
                 break;
             case R.id.btn_5:
-                ChangeInput("HDMI");
+                ChangeInput(input_list.get(4).getAction_name());
                 break;
             case R.id.btn_6:
-                ChangeInput("USB");
+                ChangeInput(input_list.get(5).getAction_name());
                 break;
             case R.id.btn:
+                DataInfo.server_ip = et_ip.getText().toString().trim();
                 List<Models> find = LitePal.findAll(Models.class);
-                for (Models m : find) {
+                if (!find.isEmpty())
+                    for (Models m : find) {
 
-                    Logger.d("model id is " + m.getId());
-                    Log.d(TAG, "model id is " + m.getId());
-                    Log.d(TAG, "model name is " + m.getModel_name());
-                    Log.d(TAG, "action name is " + m.getAction_name());
-                    Log.d(TAG, "send data is " + m.getSend_data());
-                    Log.d(TAG, "return data is " + m.getReturn_data());
-                    Log.d(TAG, "===========================");
-                }
+                        Logger.d("model id is " + m.getId());
+                        Log.d(TAG, "model id is " + m.getId());
+                        Log.d(TAG, "model name is " + m.getModel_name());
+                        Log.d(TAG, "action name is " + m.getAction_name());
+                        Log.d(TAG, "send data is " + m.getSend_data());
+                        Log.d(TAG, "return data is " + m.getReturn_data());
+                        Log.d(TAG, "===========================");
+                    }
                 break;
         }
     }
@@ -148,11 +163,12 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case DataInfo.UPDATACURRENTTIME:
+                    case DataInfo.UPDATACURRENTTIME:    //每秒更新当前时间
                         tv_time.setText(msg.getData().getString("time"));
                         break;
-                    case DataInfo.CONNECTED:
-                        tv_receive.setText("连接成功");
+                    case DataInfo.NEWCONNECT:   //新连接设备
+                        tv_receive.setText("连接设备：" + DataInfo.model_number);
+                        update_input_view();    //动态加载端口布局
                         break;
                     case DataInfo.DISCONNECTED:
                         tv_receive.setText("断开连接");
@@ -163,5 +179,4 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             }
         };
     }
-
 }
