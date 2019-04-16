@@ -1,5 +1,7 @@
 package wang.com.jkxttest;
 
+import android.widget.Button;
+
 /**
  * Created by Administrator on 2019/4/9.
  */
@@ -11,6 +13,14 @@ public class DataInfo {
     //数据库的地址
     public final static String DB_PATH = "/data/data/wang.com.jkxttest/databases/";
 
+    public static String input1;
+    public static String input2;
+    public static String input3;
+    public static String input4;
+    public static String input5;
+    public static String input6;
+    public static Button last_input;
+
     public static String server_ip = "";
     public static int server_port = 20108;
     public static String model_number = "";
@@ -19,6 +29,8 @@ public class DataInfo {
     public static final int UPDATACURRENTTIME = 1;
     public static final int NEWCONNECT = 2;
     public static final int DISCONNECTED = 3;
+    public static final int INPUTCONNECTED = 4;
+
 
 
     //用separator分割的字符串 转换成byte数组

@@ -99,7 +99,7 @@ public class Models extends LitePalSupport {
         data.setAction_name("CV2");
         data.setAction_type("input");
         data.setSend_data("E9_01_09_01_00_F4_0D_0A");
-        data.setReturn_data("E9_01_09_01_FF_F4_0D_0A");
+        data.setReturn_data("E9_01_09_01_FF_F3_0D_0A");
         data.save();
 
         data = new Models();
@@ -107,7 +107,7 @@ public class Models extends LitePalSupport {
         data.setAction_name("CV1");
         data.setAction_type("input");
         data.setSend_data("E9_01_09_01_01_F5_0D_0A");
-        data.setReturn_data("E9_01_09_01_FF_F5_0D_0A");
+        data.setReturn_data("E9_01_09_01_FF_F3_0D_0A");
         data.save();
 
         data = new Models();
@@ -115,7 +115,7 @@ public class Models extends LitePalSupport {
         data.setAction_name("VGA");
         data.setAction_type("input");
         data.setSend_data("E9_01_09_01_02_F6_0D_0A");
-        data.setReturn_data("E9_01_09_01_FF_F6_0D_0A");
+        data.setReturn_data("E9_01_09_01_FF_F3_0D_0A");
         data.save();
 
         data = new Models();
@@ -123,7 +123,7 @@ public class Models extends LitePalSupport {
         data.setAction_name("DVI");
         data.setAction_type("input");
         data.setSend_data("E9_01_09_01_03_F7_0D_0A");
-        data.setReturn_data("E9_01_09_01_FF_F7_0D_0A");
+        data.setReturn_data("E9_01_09_01_FF_F3_0D_0A");
         data.save();
 
         data = new Models();
@@ -131,7 +131,7 @@ public class Models extends LitePalSupport {
         data.setAction_name("HDMI");
         data.setAction_type("input");
         data.setSend_data("E9_01_09_01_04_F8_0D_0A");
-        data.setReturn_data("E9_01_09_01_FF_F8_0D_0A");
+        data.setReturn_data("E9_01_09_01_FF_F3_0D_0A");
         data.save();
 
         data = new Models();
@@ -139,10 +139,56 @@ public class Models extends LitePalSupport {
         data.setAction_name("USB");
         data.setAction_type("input");
         data.setSend_data("E9_01_09_01_05_F9_0D_0A");
-        data.setReturn_data("E9_01_09_01_FF_F9_0D_0A");
+        data.setReturn_data("E9_01_09_01_FF_F3_0D_0A");
         data.save();
 
+        data = new Models();
+        data.setModel_name("600");
+        data.setAction_name("CV2");
+        data.setAction_type("check_signal");
+        data.setSend_data("E9_01_0B_01_00_F6_0D_0A");
+        data.setReturn_data("E9_01_0B_01_00_F6_0D_0A");
+        data.save();
 
+        data = new Models();
+        data.setModel_name("600");
+        data.setAction_name("CV1");
+        data.setAction_type("check_signal");
+        data.setSend_data("E9_01_0B_01_00_F6_0D_0A");
+        data.setReturn_data("E9_01_0B_01_01_F7_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("600");
+        data.setAction_name("VGA");
+        data.setAction_type("check_signal");
+        data.setSend_data("E9_01_0B_01_00_F6_0D_0A");
+        data.setReturn_data("E9_01_0B_01_02_F8_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("600");
+        data.setAction_name("DVI");
+        data.setAction_type("check_signal");
+        data.setSend_data("E9_01_0B_01_00_F6_0D_0A");
+        data.setReturn_data("E9_01_0B_01_03_F9_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("600");
+        data.setAction_name("HDMI");
+        data.setAction_type("check_signal");
+        data.setSend_data("E9_01_0B_01_00_F6_0D_0A");
+        data.setReturn_data("E9_01_0B_01_04_FA_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("600");
+        data.setAction_name("USB");
+        data.setAction_type("check_signal");
+        data.setSend_data("E9_01_0B_01_00_F6_0D_0A");
+        data.setReturn_data("E9_01_0B_01_05_FB_0D_0A");
+        data.save();
     }
 
     public int getId() {
