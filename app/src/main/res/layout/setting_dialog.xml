@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/setIpAndPort"
+                android:layout_width="150dp"
+                android:layout_height="72dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/input_button"
+                android:text="ip和端口"
+                android:textColor="@color/black"
+                android:textSize="25dp" />
+
+            <Button
+                android:id="@+id/setLockMethods"
+                android:layout_width="150dp"
+                android:layout_height="72dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/input_button"
+                android:text="解锁密码"
+                android:textColor="@color/black"
+                android:textSize="25dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/setScreenSave"
+                android:layout_width="150dp"
+                android:layout_height="72dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/input_button"
+                android:text="屏保"
+                android:textColor="@color/black"
+                android:textSize="25dp" />
+
+            <Button
+                android:id="@+id/setSystem"
+                android:layout_width="150dp"
+                android:layout_height="72dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/input_button"
+                android:text="系统设置"
+                android:textColor="@color/black"
+                android:textSize="25dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

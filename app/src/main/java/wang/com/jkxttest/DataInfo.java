@@ -1,7 +1,5 @@
 package wang.com.jkxttest;
 
-import android.widget.Button;
-
 /**
  * Created by Administrator on 2019/4/9.
  */
@@ -19,10 +17,10 @@ public class DataInfo {
     public static String input4;
     public static String input5;
     public static String input6;
-    public static Button last_input;
+    public static String last_input;
 
-    public static String server_ip = "";
-    public static int server_port = 20108;
+    public static String server_ip;
+    public static int server_port;
     public static String model_number = "";
     public static boolean ConnectionState = false;
     public static int agreement_len = 8;
@@ -30,7 +28,6 @@ public class DataInfo {
     public static final int NEWCONNECT = 2;
     public static final int DISCONNECTED = 3;
     public static final int INPUTCONNECTED = 4;
-
 
 
     //用separator分割的字符串 转换成byte数组

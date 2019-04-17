@@ -55,30 +55,21 @@ public class UDPReceiveThread extends Thread {
         if (DataInfo.ConnectionState) {
             //找到当前接收数据的动作类型
             List<Models> list = LitePal.where("model_name = ? and return_data = ?", DataInfo.model_number, data).find(Models.class);
-            Logger.e(list.get(0).getAction_name() + list.get(0).getAction_type());
+            Logger.e(list.get(0).getAction_name() + "  " + list.get(0).getAction_type());
             if (!list.isEmpty()) {
-                //Logger.e(list.get(0).getAction_type());
                 switch (list.get(0).getAction_type()) {
                     case "CheckConnect":
                         LastCheckConnectDate = new Date(System.currentTimeMillis());    //更新最新检查连接时间
                         break;
-//                    case "input":
-                        //收到切换端口操作，发送check_signal协议
-//                        List<Models> check_list = LitePal.where("model_name = ? and action_type = ?", DataInfo.model_number, "check_signal").find(Models.class);
-//                        if (!check_list.isEmpty()) {
-//                            UDPThread sendThread = new UDPThread();
-//                            sendThread.setData(StrToHexByte(check_list.get(0).getSend_data(), "_"));
-//                            sendThread.start();
-//                        }
-//                        break;
-                    case "check_signal":
-                        Logger.e(list.get(0).getAction_name());
-                        //接收到的是画面状态查询返回值 更新UI按钮画面连接状态标志
-                        msg.what = DataInfo.INPUTCONNECTED;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("input", list.get(0).getAction_name());
-                        msg.setData(bundle);
-                        HomePageActivity.mHandler.sendMessage(msg);
+                    case "check_signal":    //接收到的是画面状态查询返回值 更新UI按钮画面连接状态标志
+                        if (DataInfo.last_input != list.get(0).getAction_name()) {
+                            DataInfo.last_input = list.get(0).getAction_name();
+                            msg.what = DataInfo.INPUTCONNECTED;
+                            Bundle bundle = new Bundle();
+                            bundle.putString("input", list.get(0).getAction_name());
+                            msg.setData(bundle);
+                            HomePageActivity.mHandler.sendMessage(msg);
+                        }
                         break;
                     case "mode":
                         //接收到模式转换返回值 更新模式按钮颜色

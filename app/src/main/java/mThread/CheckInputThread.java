@@ -1,5 +1,7 @@
 package mThread;
 
+import com.orhanobut.logger.Logger;
+
 import org.litepal.LitePal;
 
 import java.util.List;
@@ -25,6 +27,8 @@ public class CheckInputThread extends Thread {
                     UDPThread sendThread = new UDPThread();
                     sendThread.setData(StrToHexByte(check_list.get(0).getSend_data(), "_"));
                     sendThread.start();
+                } else {
+                    Logger.e("Not Found CheckSignal Agreement");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
