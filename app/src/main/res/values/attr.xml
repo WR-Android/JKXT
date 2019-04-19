@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PasswordView">
+        <attr name="pv_color" format="color|reference" />
+        <attr name="pv_background_color" format="color|reference" />
+        <attr name="pv_stroke_color" format="color|reference" />
+        <attr name="pv_stroke_width" format="dimension" />
+        <attr name="pv_password_length" format="integer|reference" />
+    </declare-styleable>
+</resources>

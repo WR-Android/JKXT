@@ -18,7 +18,7 @@ public class TimeThread extends Thread {
     @Override
     public void run() {
         super.run();
-        while (true)
+        while (DataInfo.Thread_alive)
             try {
                 Thread.sleep(1000);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

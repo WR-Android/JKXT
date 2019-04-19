@@ -1,6 +1,7 @@
 package wang.com.jkxttest;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,12 +10,15 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,8 +42,8 @@ import static wang.com.jkxttest.DataInfo.StrToHexByte;
 
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private CountTimer countTimerView;
     public static Handler mHandler;
-    private static final String TAG = "HomePageActivity";
     private TextView tv_receive;
     private Button btn_1;
     private Button btn_2;
@@ -53,33 +57,62 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private Button btn_lock;
     private Button btn_abouts;
     private Dialog mDialog;
+    private Dialog ScreenSaverDialog;
     private Button bt_confirm;
     private Button bt_cancel;
     private EditText et_ip;
     private EditText et_port;
+    private Button btn_setSystem;
+    private Button btn_setScreenSave;
+    private Button btn_setLockPassword;
+    private Button btn_setIpAndPort;
+
+    private PasswordView mPasswordView;
+    private final int[] ids = {
+            R.id.btn_00,
+            R.id.btn_01,
+            R.id.btn_02,
+            R.id.btn_03,
+            R.id.btn_04,
+            R.id.btn_05,
+            R.id.btn_06,
+            R.id.btn_07,
+            R.id.btn_08,
+            R.id.btn_09,
+            R.id.btn_clear,
+            R.id.btn_delete
+    };
+    private Button[] buttons = new Button[ids.length];
+    private Button btn_saveLockPwd;
+    private EditText et_lockpwd;
+    private EditText et_screenSave;
+    private CheckBox cb_startScreenSave;
+    private Button btn_screenSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DataInfo.Thread_alive = true;   //线程开启标记
         Logger.init().hideThreadInfo();
-        setContentView(R.layout.activity_homepage);
+        setContentView(R.layout.homepage);
         try {
             if (!(new File(DataInfo.DB_PATH + DataInfo.DB_NAME).exists())) {    //判断数据库文件是否已存在
-                Log.e(TAG, "===创建数据库===");
+                Logger.d("===创建数据库===");
                 create_database();      //初始化数据库
             } else {
-                Log.e(TAG, "===数据库已存在 没有创建数据库===");
+                Logger.d("===数据库已存在 没有创建数据库===");
             }
         } catch (Exception e) {
             Logger.e("DB File Error");
             e.printStackTrace();
         }
         initView();     //初始化控件
-        initSP();   //初始化提取保存的ip和port
+        initSP();   //初始化提取保存的ip,port,pwd
+        countTimerView = new CountTimer(Long.parseLong(DataInfo.ScreenSaveTime) * 1000, 1000, this);
 
-        new TimeThread().start();   //开时钟线程
+        new TimeThread().start();           //开时钟线程
         new CheckConnectThread().start();   //开设备连接线程
-        new CheckInputThread().start();
+        new CheckInputThread().start();     //开input端口检测线程
 
         //加载默认主界面布局
         DataInfo.model_number = "880";
@@ -98,7 +131,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             DataInfo.input4 = input_list.get(3).getAction_name();
             DataInfo.input5 = input_list.get(4).getAction_name();
             DataInfo.input6 = input_list.get(5).getAction_name();
-            Logger.e("刷新按钮控件");
             btn_1.setText(DataInfo.input1);
             btn_2.setText(DataInfo.input2);
             btn_3.setText(DataInfo.input3);
@@ -121,7 +153,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btn_4 = (Button) findViewById(R.id.btn_4);
         btn_5 = (Button) findViewById(R.id.btn_5);
         btn_6 = (Button) findViewById(R.id.btn_6);
-
         btn_setting.setOnClickListener(this);
         btn_lock.setOnClickListener(this);
         btn_abouts.setOnClickListener(this);
@@ -142,6 +173,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             DataInfo.server_ip = "192.168.1.223";
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("ip", "192.168.1.223");
+            editor.commit();
         }
 
         if (sp.getString("port", null) != null) {
@@ -150,6 +182,34 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             DataInfo.server_port = 20108;
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("port", "20108");
+            editor.commit();
+        }
+
+        if (sp.getString("pwd", null) != null) {
+            DataInfo.lock_pwd = sp.getString("pwd", "1234");
+        } else {
+            DataInfo.lock_pwd = "1234";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("pwd", "1234");
+            editor.commit();
+        }
+
+        if (sp.getString("ScreenSaveTime", null) != null) {
+            DataInfo.ScreenSaveTime = sp.getString("ScreenSaveTime", "60");
+        } else {
+            DataInfo.ScreenSaveTime = "60";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("ScreenSaveTime", "60");
+            editor.commit();
+        }
+
+        if (sp.getBoolean("ScreenSaveChecked", false)) {
+            DataInfo.ScreenSaveChecked = sp.getBoolean("ScreenSaveChecked", false);
+        } else {
+            DataInfo.ScreenSaveChecked = false;
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("ScreenSaveChecked", false);
+            editor.commit();
         }
     }
 
@@ -175,7 +235,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 ChangeInput(DataInfo.input6);
                 break;
             case R.id.btn_setting:
-                showIpPortDialog();
+                showLockSettingDialog();
                 break;
             case R.id.btn_lock:
                 showLockDialog();
@@ -184,56 +244,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 showAboutsDialog();
                 break;
         }
-    }
-
-    private void showLockDialog() {
-        //1.创建一个Dialog对象，如果是AlertDialog对象的话，弹出的自定义布局四周会有一些阴影，效果不好
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.setting_dialog, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高,如果不设置的话，弹出的对话框可能不会显示全整个布局，当然在布局中写死宽高也可以
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-//        lp.width = 300;
-//        lp.height = 300;
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-//        HomePageActivity.this.startActivity(new Intent(Settings.ACTION_SETTINGS));
-    }
-
-    private void showAboutsDialog() {
-        //1.创建一个Dialog对象，如果是AlertDialog对象的话，弹出的自定义布局四周会有一些阴影，效果不好
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.abouts_dialog, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高,如果不设置的话，弹出的对话框可能不会显示全整个布局，当然在布局中写死宽高也可以
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-//        lp.width = 300;
-//        lp.height = 300;
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-
     }
 
     private void ChangeInput(String input_name) {
@@ -272,8 +282,158 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    private void showLockSettingDialog() {
+
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.lockpwd, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+//        lp.width = 300;
+//        lp.height = 300;
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(true);
+
+        mPasswordView = (PasswordView) dialogView.findViewById(R.id.et_password);
+        mPasswordView.addOnPasswordChangedListener(new PasswordView.OnPasswordChangedListener() {
+            @Override
+            public void onPasswordChanged(String password) {
+            }
+
+            @Override
+            public void onPasswordFinish(String password) {
+                if (DataInfo.lock_pwd.equals(password)) {
+                    mDialog.dismiss();
+                    showSettingDialog();
+                } else {
+                    mPasswordView.clearPassword();
+                    Toast.makeText(HomePageActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        initLockDialogListener(dialogView);
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
+            }
+        });
+    }
+
+    private void showSettingDialog() {
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.setting_dialog, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+//        lp.width = 300;
+//        lp.height = 300;
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(true);
+        initSettingDialogView(dialogView);
+        initSettingDialogListener();
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
+            }
+        });
+    }
+
+    private void initSettingDialogView(View view) {
+        btn_setIpAndPort = (Button) view.findViewById(R.id.setIpAndPort);
+        btn_setLockPassword = (Button) view.findViewById(R.id.setLockPassword);
+        btn_setScreenSave = (Button) view.findViewById(R.id.setScreenSave);
+        btn_setSystem = (Button) view.findViewById(R.id.setSystem);
+    }
+
+    private void initSettingDialogListener() {
+        btn_setIpAndPort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                mDialog.dismiss();
+                showIpPortDialog();
+            }
+        });
+
+        btn_setLockPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                mDialog.dismiss();
+                showSetPasswordDialog();
+            }
+        });
+
+        btn_setScreenSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                mDialog.dismiss();
+                showSetScreenSaveDialog();
+            }
+        });
+
+        btn_setSystem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                HomePageActivity.this.startActivity(new Intent(Settings.ACTION_SETTINGS));
+                mDialog.dismiss();
+            }
+        });
+    }
+
     public void showIpPortDialog() {
-        //1.创建一个Dialog对象，如果是AlertDialog对象的话，弹出的自定义布局四周会有一些阴影，效果不好
+        //1.创建一个Dialog对象
         mDialog = new Dialog(this);
         //去除标题栏
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -282,7 +442,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         View dialogView = inflater.inflate(R.layout.ipportsetdialog, null);
         //将自定义布局设置进去
         mDialog.setContentView(dialogView);
-        //3.设置指定的宽高,如果不设置的话，弹出的对话框可能不会显示全整个布局，当然在布局中写死宽高也可以
+        //3.设置指定的宽高
 
         WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
 //        lp.width = 300;
@@ -300,8 +460,22 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         et_ip.setText(sp.getString("ip", null));
         et_port.setText(sp.getString("port", null));
-
         initIpPortDialogListener();
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
+            }
+        });
     }
 
     private void initIpPortDialogView(View view) {
@@ -312,10 +486,11 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initIpPortDialogListener() {
-
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
                 if (TextUtils.isEmpty(et_ip.getText())) {
                     Toast.makeText(HomePageActivity.this, "IP地址不能为空", Toast.LENGTH_SHORT).show();
                     return;
@@ -334,11 +509,315 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 mDialog.dismiss();
             }
         });
-
         bt_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
                 mDialog.dismiss();
+            }
+        });
+    }
+
+    private void showSetPasswordDialog() {
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.setlockpwd, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+//        lp.width = 300;
+//        lp.height = 300;
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(true);
+        initSetPasswordDialogView(dialogView);
+        //将sp中存储的密码pwd显示
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+        et_lockpwd.setText(sp.getString("pwd", null));
+        initSetPasswordDialogListener();
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
+            }
+        });
+    }
+
+    private void initSetPasswordDialogView(View view) {
+        et_lockpwd = (EditText) view.findViewById(R.id.et_lockpwd);
+        btn_saveLockPwd = (Button) view.findViewById(R.id.saveLockPwd);
+    }
+
+    private void initSetPasswordDialogListener() {
+        btn_saveLockPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                if (TextUtils.isEmpty(et_lockpwd.getText())) {
+                    Toast.makeText(HomePageActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String s = et_lockpwd.getText().toString().trim();
+                if (s.length() != 4) {
+                    Toast.makeText(HomePageActivity.this, "密码长度错误，请输入四位密码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                DataInfo.lock_pwd = et_lockpwd.getText().toString().trim();
+                SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+                SharedPreferences.Editor edit = sp.edit();
+                edit.putString("pwd", DataInfo.lock_pwd);
+                edit.commit();
+                mDialog.dismiss();
+            }
+        });
+    }
+
+    private void showSetScreenSaveDialog() {
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.setscreensave_dialog, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+//        lp.width = 300;
+//        lp.height = 300;
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(true);
+        initSetScreenSaveDialogView(dialogView);
+        //将sp中存储的密码pwd显示
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+        et_screenSave.setText(DataInfo.ScreenSaveTime);
+        cb_startScreenSave.setChecked(DataInfo.ScreenSaveChecked);
+        initSetScreenSaveDialogListener();
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
+            }
+        });
+    }
+
+    private void initSetScreenSaveDialogView(View view) {
+        et_screenSave = (EditText) view.findViewById(R.id.et_ScreenSave);
+        cb_startScreenSave = (CheckBox) view.findViewById(R.id.cb_startScreenSave);
+        btn_screenSave = (Button) view.findViewById(R.id.btn_ScreenSave);
+    }
+
+    private void initSetScreenSaveDialogListener() {
+        btn_screenSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(et_screenSave.getText())) {
+                    Toast.makeText(HomePageActivity.this, "屏保时间不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String s = et_screenSave.getText().toString().trim();
+                boolean checked = cb_startScreenSave.isChecked();
+                if ("0".equals(s)) {
+                    DataInfo.ScreenSaveChecked = false;
+                    checked = false;
+                }
+                if (checked) {
+                    Toast.makeText(HomePageActivity.this, "屏保开启", Toast.LENGTH_SHORT).show();
+                    countTimerView.cancel();
+                    countTimerView = new CountTimer(Long.parseLong(s) * 1000, 1000, HomePageActivity.this);
+                    countTimerView.start();
+                } else {
+                    Toast.makeText(HomePageActivity.this, "屏保关闭", Toast.LENGTH_SHORT).show();
+                }
+                DataInfo.ScreenSaveChecked = checked;
+                DataInfo.ScreenSaveTime = s;
+                SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+                SharedPreferences.Editor edit = sp.edit();
+                edit.putString("ScreenSaveTime", s);
+                edit.putBoolean("ScreenSaveChecked", checked);
+                edit.commit();
+                mDialog.dismiss();
+            }
+        });
+    }
+
+    private void showScreenSaveDialog() {
+        //1.创建一个Dialog对象
+        ScreenSaverDialog = new Dialog(this);
+        //去除标题栏
+        ScreenSaverDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.screensaver_dialog, null);
+        //将自定义布局设置进去
+        ScreenSaverDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+        ScreenSaverDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL);
+        ScreenSaverDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        ScreenSaverDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        ScreenSaverDialog.show();
+
+        //设置点击其它地方消失Dialog
+        ScreenSaverDialog.setCancelable(true);
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                ScreenSaverDialog.dismiss();
+                return false;
+            }
+        });
+    }
+
+    private void showLockDialog() {
+
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.lockpwd, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+//        lp.width = 300;
+//        lp.height = 300;
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(false);
+        mPasswordView = (PasswordView) dialogView.findViewById(R.id.et_password);
+        mPasswordView.addOnPasswordChangedListener(new PasswordView.OnPasswordChangedListener() {
+            @Override
+            public void onPasswordChanged(String password) {
+            }
+
+            @Override
+            public void onPasswordFinish(String password) {
+                if (DataInfo.lock_pwd.equals(password)) {
+                    mDialog.dismiss();
+                } else {
+                    mPasswordView.clearPassword();
+                    Toast.makeText(HomePageActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        initLockDialogListener(dialogView);
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+    }
+
+    private void initLockDialogListener(View view) {
+        for (int i = 0; i < ids.length; i++) {
+            buttons[i] = (Button) view.findViewById(ids[i]);
+            buttons[i].setOnClickListener(listener);
+        }
+    }
+
+    private View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.btn_delete) {
+                mPasswordView.delete();
+            } else if (v.getId() == R.id.btn_clear) {
+                mPasswordView.clearPassword();
+            } else {
+                Button button = (Button) v;
+                String input = button.getText().toString();
+                mPasswordView.input(input);
+            }
+            countTimerView.cancel();
+            countTimerView.start();
+        }
+    };
+
+    private void showAboutsDialog() {
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.abouts_dialog, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+//        lp.width = 300;
+//        lp.height = 300;
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(true);
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
             }
         });
     }
@@ -364,10 +843,65 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                     case DataInfo.INPUTCONNECTED:
                         connection_input(msg.getData().getString("input"));
                         break;
+                    case DataInfo.SCREENSAVER:  //开启屏保
+                        showScreenSaveDialog();
+                        break;
                     default:
                         break;
                 }
             }
         };
     }
+
+    private void timeStart() {
+        new Handler(getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                countTimerView.start();
+            }
+        });
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            //获取触摸动作，如果ACTION_UP，计时开始。
+            case MotionEvent.ACTION_UP:
+                countTimerView.start();
+                break;
+            //否则其他动作计时取消
+            default:
+                countTimerView.cancel();
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        countTimerView.cancel();
+        countTimerView.start();
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        countTimerView.cancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        timeStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Logger.e("onDestroy");
+        DataInfo.Thread_alive = false;
+        countTimerView.cancel();
+    }
+
 }

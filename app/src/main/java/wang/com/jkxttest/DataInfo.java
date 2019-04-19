@@ -10,6 +10,7 @@ public class DataInfo {
     public final static String DB_NAME = "Agreement.db";
     //数据库的地址
     public final static String DB_PATH = "/data/data/wang.com.jkxttest/databases/";
+    public static boolean Thread_alive = true;
 
     public static String input1;
     public static String input2;
@@ -24,10 +25,14 @@ public class DataInfo {
     public static String model_number = "";
     public static boolean ConnectionState = false;
     public static int agreement_len = 8;
+    public static String lock_pwd = "1234";
+    public static String ScreenSaveTime = "60";
+    public static boolean ScreenSaveChecked = false;
     public static final int UPDATACURRENTTIME = 1;
     public static final int NEWCONNECT = 2;
     public static final int DISCONNECTED = 3;
     public static final int INPUTCONNECTED = 4;
+    public static final int SCREENSAVER = 5;
 
 
     //用separator分割的字符串 转换成byte数组

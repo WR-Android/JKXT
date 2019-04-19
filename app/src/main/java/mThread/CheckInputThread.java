@@ -19,7 +19,7 @@ public class CheckInputThread extends Thread {
     @Override
     public void run() {
         super.run();
-        while (true)
+        while (DataInfo.Thread_alive)
             try {
                 Thread.sleep(1000);
                 List<Models> check_list = LitePal.where("model_name = ? and action_type = ?", DataInfo.model_number, "check_signal").find(Models.class);
@@ -28,7 +28,7 @@ public class CheckInputThread extends Thread {
                     sendThread.setData(StrToHexByte(check_list.get(0).getSend_data(), "_"));
                     sendThread.start();
                 } else {
-                    Logger.e("Not Found CheckSignal Agreement");
+                    //Logger.e("Not Found CheckSignal Agreement");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

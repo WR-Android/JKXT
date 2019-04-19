@@ -19,7 +19,7 @@ public class CheckConnectThread extends Thread {
     @Override
     public void run() {
         //super.run();
-        while (true)
+        while (DataInfo.Thread_alive)
             try {
                 UDPThread checkThread = new UDPThread();
                 checkThread.setData(DataInfo.StrToHexByte("E9_01_01_00_00_EB_0D_0A","_"));
