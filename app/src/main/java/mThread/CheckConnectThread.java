@@ -27,7 +27,7 @@ public class CheckConnectThread extends Thread {
                 Thread.sleep(2000);
                 CurrentTime = new Date(System.currentTimeMillis());  //获取当前时间
                 long difference = CurrentTime.getTime() - LastCheckConnectDate.getTime();   //计算响应时间 正常情况1900ms左右响应
-                if (difference > 3000) {
+                if (difference > 4000) {
                     DataInfo.ConnectionState = false; //超过3000ms未响应则判定为连接断开
                     Message msg = HomePageActivity.mHandler.obtainMessage();
                     msg.what = DataInfo.DISCONNECTED;

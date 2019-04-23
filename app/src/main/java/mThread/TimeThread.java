@@ -21,12 +21,18 @@ public class TimeThread extends Thread {
         while (DataInfo.Thread_alive)
             try {
                 Thread.sleep(1000);
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat formatter_date = new SimpleDateFormat("yyyy年MM月dd日");
+                SimpleDateFormat formatter_hour = new SimpleDateFormat("HH");
+                SimpleDateFormat formatter_min = new SimpleDateFormat("mm");
+                SimpleDateFormat formatter_week = new SimpleDateFormat("EEEE");
                 Date date = new Date(System.currentTimeMillis());  //获取当前时间
                 Message msg = HomePageActivity.mHandler.obtainMessage();    //打包时间到handler主界面更新
                 msg.what = DataInfo.UPDATACURRENTTIME;
                 Bundle bundle = new Bundle();
-                bundle.putString("time", formatter.format(date));
+                bundle.putString("date", formatter_date.format(date));
+                bundle.putString("hour", formatter_hour.format(date));
+                bundle.putString("min", formatter_min.format(date));
+                bundle.putString("week", formatter_week.format(date));
                 msg.setData(bundle);
                 HomePageActivity.mHandler.sendMessage(msg);
             } catch (Exception e) {

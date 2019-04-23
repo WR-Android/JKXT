@@ -20,15 +20,20 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jaygoo.widget.OnRangeChangedListener;
+import com.jaygoo.widget.RangeSeekBar;
 import com.orhanobut.logger.Logger;
 
 import org.litepal.LitePal;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import agreement.Models;
@@ -44,18 +49,16 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     private CountTimer countTimerView;
     public static Handler mHandler;
-    private TextView tv_receive;
-    private Button btn_1;
-    private Button btn_2;
-    private Button btn_3;
-    private Button btn_4;
-    private Button btn_5;
-    private Button btn_6;
-    private TextView tv_time;
+    private ImageButton btn_1;
+    private ImageButton btn_2;
+    private ImageButton btn_3;
+    private ImageButton btn_4;
+    private ImageButton btn_5;
+    private ImageButton btn_6;
     private ImageView img_connect_state;
-    private Button btn_setting;
-    private Button btn_lock;
-    private Button btn_abouts;
+    private ImageButton btn_setting;
+    private ImageButton btn_lock;
+    private ImageButton btn_abouts;
     private Dialog mDialog;
     private Dialog ScreenSaverDialog;
     private Button bt_confirm;
@@ -88,6 +91,12 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private EditText et_screenSave;
     private CheckBox cb_startScreenSave;
     private Button btn_screenSave;
+    private RangeSeekBar sound_seekbar;
+    private TextView tv_sound;
+    private TextView tv_date;
+    private TextView tv_hour;
+    private TextView tv_min;
+    private TextView tv_week;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,52 +116,92 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             e.printStackTrace();
         }
         initView();     //初始化控件
-        initSP();   //初始化提取保存的ip,port,pwd
-        countTimerView = new CountTimer(Long.parseLong(DataInfo.ScreenSaveTime) * 1000, 1000, this);
-
+        initSP();   //初始化提取保存的ip,port,pwd,model_number
+        countTimerView = new CountTimer(Long.parseLong(DataInfo.ScreenSaveTime) * 1000, 1000, this); //打开计时器用于计算屏保倒计时
         new TimeThread().start();           //开时钟线程
         new CheckConnectThread().start();   //开设备连接线程
         new CheckInputThread().start();     //开input端口检测线程
-
-        //加载默认主界面布局
-        DataInfo.model_number = "880";
-        update_input_view();
+        update_input_view();//加载默认主界面布局
         DataInfo.last_input = DataInfo.input1;
+        initTime();//加载当前时间
+        sound_seekbar.setOnRangeChangedListener(new OnRangeChangedListener() {  //声音滑块数值监听
+            @Override
+            public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
+                tv_sound.setText(String.valueOf(Float.valueOf(leftValue).intValue()) + "%");
+            }
 
+            @Override
+            public void onStartTrackingTouch(RangeSeekBar view, boolean isLeft) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(RangeSeekBar view, boolean isLeft) {
+            }
+        });
+    }
+
+    private void initTime() {
+        SimpleDateFormat formatter_date = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat formatter_hour = new SimpleDateFormat("HH");
+        SimpleDateFormat formatter_min = new SimpleDateFormat("mm");
+        SimpleDateFormat formatter_week = new SimpleDateFormat("EEEE");
+        Date date = new Date(System.currentTimeMillis());  //获取当前时间
+        tv_date.setText(formatter_date.format(date));
+        tv_hour.setText(formatter_hour.format(date));
+        tv_min.setText(formatter_min.format(date));
+        tv_week.setText(formatter_week.format(date));
     }
 
     private void update_input_view() {
         //找到当前设备的端口信息
         List<Models> input_list = LitePal.where("model_name = ? and action_type = ?", DataInfo.model_number, "input").find(Models.class);
+        int res_id;
         if (!input_list.isEmpty()) {
+
+            SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+            SharedPreferences.Editor edit = sp.edit();
+            edit.putString("model_number", DataInfo.model_number);
+            edit.commit();
+
             DataInfo.input1 = input_list.get(0).getAction_name();
             DataInfo.input2 = input_list.get(1).getAction_name();
             DataInfo.input3 = input_list.get(2).getAction_name();
             DataInfo.input4 = input_list.get(3).getAction_name();
             DataInfo.input5 = input_list.get(4).getAction_name();
             DataInfo.input6 = input_list.get(5).getAction_name();
-            btn_1.setText(DataInfo.input1);
-            btn_2.setText(DataInfo.input2);
-            btn_3.setText(DataInfo.input3);
-            btn_4.setText(DataInfo.input4);
-            btn_5.setText(DataInfo.input5);
-            btn_6.setText(DataInfo.input6);
+
+            res_id = getResources().getIdentifier(DataInfo.input1.toLowerCase(), "drawable", getPackageName());
+            btn_1.setImageResource(res_id);
+            res_id = getResources().getIdentifier(DataInfo.input2.toLowerCase(), "drawable", getPackageName());
+            btn_2.setImageResource(res_id);
+            res_id = getResources().getIdentifier(DataInfo.input3.toLowerCase(), "drawable", getPackageName());
+            btn_3.setImageResource(res_id);
+            res_id = getResources().getIdentifier(DataInfo.input4.toLowerCase(), "drawable", getPackageName());
+            btn_4.setImageResource(res_id);
+            res_id = getResources().getIdentifier(DataInfo.input5.toLowerCase(), "drawable", getPackageName());
+            btn_5.setImageResource(res_id);
+            res_id = getResources().getIdentifier(DataInfo.input6.toLowerCase(), "drawable", getPackageName());
+            btn_6.setImageResource(res_id);
         }
     }
 
     private void initView() {
-        btn_setting = (Button) findViewById(R.id.btn_setting);
-        btn_lock = (Button) findViewById(R.id.btn_lock);
-        btn_abouts = (Button) findViewById(R.id.btn_abouts);
-        img_connect_state = (ImageView) findViewById(R.id.img_connect_state);
-        tv_time = (TextView) findViewById(R.id.tv_time);
-        tv_receive = (TextView) findViewById(R.id.tv_receive);
-        btn_1 = (Button) findViewById(R.id.btn_1);
-        btn_2 = (Button) findViewById(R.id.btn_2);
-        btn_3 = (Button) findViewById(R.id.btn_3);
-        btn_4 = (Button) findViewById(R.id.btn_4);
-        btn_5 = (Button) findViewById(R.id.btn_5);
-        btn_6 = (Button) findViewById(R.id.btn_6);
+        btn_setting = findViewById(R.id.btn_setting);
+        btn_lock = findViewById(R.id.btn_lock);
+        btn_abouts = findViewById(R.id.btn_abouts);
+        img_connect_state = findViewById(R.id.img_connect_state);
+        tv_date = findViewById(R.id.tv_date);
+        tv_hour = findViewById(R.id.tv_hour);
+        tv_min = findViewById(R.id.tv_min);
+        tv_week = findViewById(R.id.tv_week);
+        btn_1 = findViewById(R.id.btn_1);
+        btn_2 = findViewById(R.id.btn_2);
+        btn_3 = findViewById(R.id.btn_3);
+        btn_4 = findViewById(R.id.btn_4);
+        btn_5 = findViewById(R.id.btn_5);
+        btn_6 = findViewById(R.id.btn_6);
+        sound_seekbar = findViewById(R.id.sound_seekbar);
+        tv_sound = findViewById(R.id.tv_sound);
         btn_setting.setOnClickListener(this);
         btn_lock.setOnClickListener(this);
         btn_abouts.setOnClickListener(this);
@@ -209,6 +258,15 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             DataInfo.ScreenSaveChecked = false;
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("ScreenSaveChecked", false);
+            editor.commit();
+        }
+
+        if (sp.getString("model_number", null) != null) {
+            DataInfo.model_number = sp.getString("model_number", "600");
+        } else {
+            DataInfo.model_number = "600";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("model_number", "600");
             editor.commit();
         }
     }
@@ -268,17 +326,17 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btn_6.setBackgroundResource(R.drawable.input_button);
 
         if (input.equals(DataInfo.input1)) {
-            btn_1.setBackgroundResource(R.drawable.input_button_click);
+            btn_1.setBackgroundResource(R.drawable.input_button_connect);
         } else if (input.equals(DataInfo.input2)) {
-            btn_2.setBackgroundResource(R.drawable.input_button_click);
+            btn_2.setBackgroundResource(R.drawable.input_button_connect);
         } else if (input.equals(DataInfo.input3)) {
-            btn_3.setBackgroundResource(R.drawable.input_button_click);
+            btn_3.setBackgroundResource(R.drawable.input_button_connect);
         } else if (input.equals(DataInfo.input4)) {
-            btn_4.setBackgroundResource(R.drawable.input_button_click);
+            btn_4.setBackgroundResource(R.drawable.input_button_connect);
         } else if (input.equals(DataInfo.input5)) {
-            btn_5.setBackgroundResource(R.drawable.input_button_click);
+            btn_5.setBackgroundResource(R.drawable.input_button_connect);
         } else if (input.equals(DataInfo.input6)) {
-            btn_6.setBackgroundResource(R.drawable.input_button_click);
+            btn_6.setBackgroundResource(R.drawable.input_button_connect);
         }
     }
 
@@ -829,16 +887,17 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 super.handleMessage(msg);
                 switch (msg.what) {
                     case DataInfo.UPDATACURRENTTIME:    //每秒更新当前时间
-                        tv_time.setText(msg.getData().getString("time"));
+                        tv_date.setText(msg.getData().getString("date"));
+                        tv_week.setText(msg.getData().getString("week"));
+                        tv_hour.setText(msg.getData().getString("hour"));
+                        tv_min.setText(msg.getData().getString("min"));
                         break;
                     case DataInfo.NEWCONNECT:   //新连接设备
-                        tv_receive.setText("连接设备:" + DataInfo.model_number);
-                        img_connect_state.setImageResource(R.drawable.green);
+                        img_connect_state.setImageResource(R.drawable.input_green);
                         update_input_view();    //动态加载端口布局
                         break;
                     case DataInfo.DISCONNECTED:
-                        tv_receive.setText("连接已断开");
-                        img_connect_state.setImageResource(R.drawable.red);
+                        img_connect_state.setImageResource(R.drawable.input_red);
                         break;
                     case DataInfo.INPUTCONNECTED:
                         connection_input(msg.getData().getString("input"));
@@ -900,6 +959,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     protected void onDestroy() {
         super.onDestroy();
         Logger.e("onDestroy");
+        DataInfo.ConnectionState = false;
         DataInfo.Thread_alive = false;
         countTimerView.cancel();
     }

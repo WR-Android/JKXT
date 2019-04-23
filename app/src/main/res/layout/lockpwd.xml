@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:background="@drawable/input_button"
-                android:text="delete" />
+                android:text="←" />
         </GridLayout>
 
     </LinearLayout>

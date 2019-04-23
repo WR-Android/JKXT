@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.CountDownTimer;
 import android.os.Message;
 
-import com.orhanobut.logger.Logger;
-
 /**
  * Created by Administrator on 2019/4/19.
  */
@@ -25,7 +23,7 @@ public class CountTimer extends CountDownTimer {
     @Override
     public void onTick(long millisUntilFinished) {
         // 计时过程显示
-        Logger.i(millisUntilFinished+"");
+
     }
 
     // 计时完毕时触发

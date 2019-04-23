@@ -40,7 +40,7 @@ public class UDPReceiveThread extends Thread {
             mSocket.receive(receivePacket);  //接收到数据包 阻塞式
             LastReceiveDate = new Date(System.currentTimeMillis()); //更新最后一次接收到数据包的时间
             String info = HexByteToStr(buf, DataInfo.agreement_len, "_");
-            Logger.e("Receive Data: " + info);
+            //Logger.e("Receive Data: " + info);
             check_return_data(info); //处理接收到的数据
             //mSocket.close();
         } catch (Exception e) {
