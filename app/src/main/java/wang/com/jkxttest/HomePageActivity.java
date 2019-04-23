@@ -39,6 +39,7 @@ import java.util.List;
 import agreement.Models;
 import mThread.CheckConnectThread;
 import mThread.CheckInputThread;
+import mThread.DelayThread;
 import mThread.TimeThread;
 import mThread.UDPThread;
 
@@ -97,6 +98,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private TextView tv_hour;
     private TextView tv_min;
     private TextView tv_week;
+    private EditText et_delay_ip;
+    private ImageButton btn_mpower;
+    private ImageButton btn_power;
+    private TextView tv_warning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +129,12 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         update_input_view();//加载默认主界面布局
         DataInfo.last_input = DataInfo.input1;
         initTime();//加载当前时间
+
+        //查询网络继电器状态
+        DelayThread delayThread = new DelayThread();
+        delayThread.setDelaydata(StrToHexByte("FF_02_01_00_BB", "_"));
+        delayThread.start();
+
         sound_seekbar.setOnRangeChangedListener(new OnRangeChangedListener() {  //声音滑块数值监听
             @Override
             public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
@@ -186,6 +197,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initView() {
+        btn_mpower = findViewById(R.id.btn_Mpower); //设备电源 model power
+        btn_power = findViewById(R.id.btn_power);   //大屏电源
         btn_setting = findViewById(R.id.btn_setting);
         btn_lock = findViewById(R.id.btn_lock);
         btn_abouts = findViewById(R.id.btn_abouts);
@@ -202,6 +215,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btn_6 = findViewById(R.id.btn_6);
         sound_seekbar = findViewById(R.id.sound_seekbar);
         tv_sound = findViewById(R.id.tv_sound);
+        btn_power.setOnClickListener(this);
+        btn_mpower.setOnClickListener(this);
         btn_setting.setOnClickListener(this);
         btn_lock.setOnClickListener(this);
         btn_abouts.setOnClickListener(this);
@@ -231,6 +246,15 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             DataInfo.server_port = 20108;
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("port", "20108");
+            editor.commit();
+        }
+
+        if (sp.getString("delay_ip", null) != null) {
+            DataInfo.delay_ip = sp.getString("delay_ip", "192.168.1.244");
+        } else {
+            DataInfo.delay_ip = "192.168.1.244";
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("delay_ip", "192.168.1.244");
             editor.commit();
         }
 
@@ -301,6 +325,12 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn_abouts:
                 showAboutsDialog();
                 break;
+            case R.id.btn_Mpower:
+                showWarningDialog_Mpower();
+                break;
+            case R.id.btn_power:
+                showWarningDialog_power();
+                break;
         }
     }
 
@@ -338,6 +368,170 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         } else if (input.equals(DataInfo.input6)) {
             btn_6.setBackgroundResource(R.drawable.input_button_connect);
         }
+    }
+
+    private void showWarningDialog_Mpower() {
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.warning_dialog, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(true);
+        initWarningDialog_MpowerView(dialogView);
+
+        if (DataInfo.MpowerState)
+            tv_warning.setText("确认关闭设备电源？");
+        else
+            tv_warning.setText("确认打开设备电源？");
+
+        initWarningDialog_MpowerListener();
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
+            }
+        });
+    }
+
+    private void initWarningDialog_MpowerView(View view) {
+        bt_confirm = view.findViewById(R.id.btn_confirm);
+        bt_cancel = view.findViewById(R.id.btn_cancel);
+        tv_warning = view.findViewById(R.id.tv_warning);
+    }
+
+    private void initWarningDialog_MpowerListener() {
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                if (DataInfo.MpowerState) {
+                    //发送继电器1断开指令
+                    DelayThread delayThread = new DelayThread();
+                    delayThread.setDelaydata(StrToHexByte("FF_03_01_14_BB", "_"));
+                    delayThread.start();
+                } else {
+                    //发送继电器1吸合指令
+                    DelayThread delayThread = new DelayThread();
+                    delayThread.setDelaydata(StrToHexByte("FF_03_01_15_BB", "_"));
+                    delayThread.start();
+                }
+                mDialog.dismiss();
+            }
+        });
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                mDialog.dismiss();
+            }
+        });
+    }
+
+    private void showWarningDialog_power() {
+        //1.创建一个Dialog对象
+        mDialog = new Dialog(this);
+        //去除标题栏
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //2.填充布局
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.warning_dialog, null);
+        //将自定义布局设置进去
+        mDialog.setContentView(dialogView);
+        //3.设置指定的宽高
+
+        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
+        mDialog.show();
+        mDialog.getWindow().setAttributes(lp);
+        //设置点击其它地方消失Dialog
+        mDialog.setCancelable(true);
+        initWarningDialog_powerView(dialogView);
+
+        if (DataInfo.PowerState)
+            tv_warning.setText("确认关闭大屏电源？");
+        else
+            tv_warning.setText("确认打开大屏电源？");
+
+        initWarningDialog_powerListener();
+        dialogView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                countTimerView.cancel();
+                countTimerView.start();
+                return false;
+            }
+        });
+        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                countTimerView.cancel();
+                countTimerView.start();
+            }
+        });
+    }
+
+    private void initWarningDialog_powerView(View view) {
+        bt_confirm = view.findViewById(R.id.btn_confirm);
+        bt_cancel = view.findViewById(R.id.btn_cancel);
+        tv_warning = view.findViewById(R.id.tv_warning);
+    }
+
+    private void initWarningDialog_powerListener() {
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                if (DataInfo.PowerState) {
+                    //发送继电器1断开指令
+                    DelayThread delayThread = new DelayThread();
+                    delayThread.setDelaydata(StrToHexByte("FF_03_01_0A_BB", "_"));
+                    delayThread.start();
+                } else {
+                    //发送继电器1吸合指令
+                    DelayThread delayThread = new DelayThread();
+                    delayThread.setDelaydata(StrToHexByte("FF_03_01_0B_BB", "_"));
+                    delayThread.start();
+                }
+                mDialog.dismiss();
+            }
+        });
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                countTimerView.cancel();
+                countTimerView.start();
+                mDialog.dismiss();
+            }
+        });
     }
 
     private void showLockSettingDialog() {
@@ -518,6 +712,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         et_ip.setText(sp.getString("ip", null));
         et_port.setText(sp.getString("port", null));
+        et_delay_ip.setText(sp.getString("delay_ip", null));
         initIpPortDialogListener();
         dialogView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -539,6 +734,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private void initIpPortDialogView(View view) {
         et_ip = (EditText) view.findViewById(R.id.et_ip);
         et_port = (EditText) view.findViewById(R.id.et_port);
+        et_delay_ip = (EditText) view.findViewById(R.id.et_delay_ip);
         bt_confirm = (Button) view.findViewById(R.id.btn_confirm);
         bt_cancel = (Button) view.findViewById(R.id.btn_cancel);
     }
@@ -557,12 +753,18 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(HomePageActivity.this, "端口号不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (TextUtils.isEmpty(et_delay_ip.getText())) {
+                    Toast.makeText(HomePageActivity.this, "网络继电器IP地址不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 DataInfo.server_ip = et_ip.getText().toString().trim();
                 DataInfo.server_port = Integer.parseInt(et_port.getText().toString().trim());
+                DataInfo.delay_ip = et_delay_ip.getText().toString().trim();
                 SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
                 SharedPreferences.Editor edit = sp.edit();
                 edit.putString("ip", DataInfo.server_ip);
                 edit.putString("port", String.valueOf(DataInfo.server_port));
+                edit.putString("delay_ip", DataInfo.delay_ip);
                 edit.commit();
                 mDialog.dismiss();
             }
@@ -904,6 +1106,18 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                         break;
                     case DataInfo.SCREENSAVER:  //开启屏保
                         showScreenSaveDialog();
+                        break;
+                    case DataInfo.POWERCONNECT:
+                        btn_power.setImageResource(R.drawable.onall);
+                        break;
+                    case DataInfo.POWERDISCONNECT:
+                        btn_power.setImageResource(R.drawable.offall);
+                        break;
+                    case DataInfo.MPOWERCONNECT:
+                        btn_mpower.setImageResource(R.drawable.on);
+                        break;
+                    case DataInfo.MPOWERDISCONNECT:
+                        btn_mpower.setImageResource(R.drawable.off);
                         break;
                     default:
                         break;

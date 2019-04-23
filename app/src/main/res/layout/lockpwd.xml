@@ -132,6 +132,7 @@
                 android:layout_margin="3dp"
                 android:background="@drawable/input_button"
                 android:text="←" />
+
         </GridLayout>
 
     </LinearLayout>

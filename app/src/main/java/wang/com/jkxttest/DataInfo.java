@@ -10,6 +10,10 @@ public class DataInfo {
     public final static String DB_NAME = "Agreement.db";
     //数据库的地址
     public final static String DB_PATH = "/data/data/wang.com.jkxttest/databases/";
+    public static final int POWERCONNECT = 6;
+    public static final int MPOWERCONNECT = 7;
+    public static final int POWERDISCONNECT = 8;
+    public static final int MPOWERDISCONNECT = 9;
     public static boolean Thread_alive = true;
 
     public static String input1;
@@ -22,8 +26,12 @@ public class DataInfo {
 
     public static String server_ip;
     public static int server_port;
+    public static String delay_ip;
+    public static int delay_port = 6548;
     public static String model_number = "";
     public static boolean ConnectionState = false;
+    public static boolean MpowerState = false;
+    public static boolean PowerState = false;
     public static int agreement_len = 8;
     public static String lock_pwd = "1234";
     public static String ScreenSaveTime = "60";
