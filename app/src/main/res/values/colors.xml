@@ -6,6 +6,11 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorTransparent">#00ffffff</color>
 
+    <color name="primary_text">#ccffffff</color>
+
+    <color name="pv_background">#fa7d0f</color>
+    <color name="pv_stroke">#727272</color>
+    
     <color name="white">#FFFFFF</color>
     <!-- 白色 -->
     <color name="ivory">#FFFFF0</color>

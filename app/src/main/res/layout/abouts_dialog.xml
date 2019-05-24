@@ -1,79 +1,67 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/beige"
-    android:orientation="vertical"
-
-    >
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_width="560dp"
+        android:layout_height="470dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_lock"
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="500dp"
-            android:layout_height="66dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:text="华夏显示——智能中控平台"
-            android:textColor="@color/palevioletred"
-            android:textSize="35dp" />
+            style="@style/SettingTitleStyle"
+            android:layout_marginTop="25dp"
+            android:text="关于" />
 
         <TextView
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-
-            android:gravity="center_horizontal"
-            android:text="安徽华夏显示技术股份有限公司"
-            android:textColor="@color/palevioletred"
-            android:textSize="25dp" />
-
-        <TextView
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:text="联系方式：0553-3026095"
-            android:textColor="@color/palevioletred"
-            android:textSize="25dp" />
-
-        <TextView
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:text="型号：LedView300"
-            android:textColor="@color/palevioletred"
-            android:textSize="25dp" />
-
-        <TextView
-            android:id="@+id/tv_version"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:text="版本：1.0"
-            android:textColor="@color/palevioletred"
-            android:textSize="25dp" />
+            style="@style/SettingTextStyle"
+            android:layout_marginBottom="20dp"
+            android:text="华夏显示——集控系统"
+            android:textSize="28dp" />
 
         <LinearLayout
-            android:layout_width="500dp"
+            android:layout_width="420dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"></LinearLayout>
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/SettingTextStyle"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="left"
+                android:text="版权所有：安徽华夏显示技术股份有限公司"
+                android:textSize="22dp" />
+
+            <TextView
+                style="@style/SettingTextStyle"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="left"
+                android:text="联系方式：0553-3026095"
+                android:textSize="25dp" />
+
+            <TextView
+                style="@style/SettingTextStyle"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="left"
+                android:text="型号：LedView300"
+                android:textSize="25dp" />
+
+            <TextView
+                android:id="@+id/tv_version"
+                style="@style/SettingTextStyle"
+                android:layout_gravity="left"
+                android:text="版本：1.0"
+                android:textSize="25dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/abouts_confirm"
+            style="@style/ConfirmButtonStyle"
+            android:layout_marginTop="30dp"
+            android:text="确定"
+            />
+
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

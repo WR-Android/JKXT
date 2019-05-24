@@ -35,10 +35,10 @@ public class PasswordView extends View {
     public PasswordView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.PasswordView);
-        color = array.getColor(R.styleable.PasswordView_pv_color, Color.BLACK);
-        backgroundColor = array.getColor(R.styleable.PasswordView_pv_background_color, Color.WHITE);
-        strokeColor = array.getColor(R.styleable.PasswordView_pv_stroke_color, Color.BLACK);
-        strokeWidth = array.getDimensionPixelSize(R.styleable.PasswordView_pv_stroke_width, 1);
+        color = array.getColor(R.styleable.PasswordView_pv_color, getResources().getColor(R.color.pv_background));
+        backgroundColor = array.getColor(R.styleable.PasswordView_pv_background_color,getResources().getColor(R.color.colorTransparent));
+        strokeColor = array.getColor(R.styleable.PasswordView_pv_stroke_color, getResources().getColor(R.color.pv_stroke));
+        strokeWidth = array.getDimensionPixelSize(R.styleable.PasswordView_pv_stroke_width, 3);
         passwordLength = array.getInt(R.styleable.PasswordView_pv_password_length, 4);
         array.recycle();
         init();
@@ -106,22 +106,17 @@ public class PasswordView extends View {
         int width = getWidth();
         int height = getHeight();
         int stepWidth = width / passwordLength;
-
-        mPaint.setColor(backgroundColor);
-        mPaint.setStyle(Paint.Style.FILL);
-        canvas.drawRect(0, 0, width, height, mPaint);
+        int radius = stepWidth / 8;
 
         mPaint.setColor(strokeColor);
         mPaint.setStrokeWidth(strokeWidth);
         mPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0, 0, width - strokeWidth, height - strokeWidth, mPaint);
-        for (int i = 1; i < passwordLength; i++) {
-            canvas.drawLine(stepWidth * i, 0, stepWidth * i, height, mPaint);
+        for (int i = 0; i < passwordLength; i++) {
+            canvas.drawCircle(stepWidth / 2 + stepWidth * i, height / 2, radius+2, mPaint);
         }
 
         mPaint.setColor(color);
         mPaint.setStyle(Paint.Style.FILL);
-        int radius = stepWidth / 8;
         int len = password.length() > passwordLength ? passwordLength : password.length();
         for (int i = 0; i < len; i++) {
             canvas.drawCircle(stepWidth / 2 + stepWidth * i, height / 2, radius, mPaint);
@@ -130,7 +125,6 @@ public class PasswordView extends View {
 
     public interface OnPasswordChangedListener {
         void onPasswordChanged(String password);
-
         void onPasswordFinish(String password);
     }
 }

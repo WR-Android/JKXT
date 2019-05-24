@@ -4,6 +4,7 @@
     <version value="1" />
     <list>
         <mapping class="agreement.Models"></mapping>
+        <mapping class="agreement.TimingLists"></mapping>
     </list>
     <!--<storage value="WR/database"/>-->
 </litepal>

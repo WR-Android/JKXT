@@ -2,6 +2,7 @@ package mThread;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 
@@ -16,6 +17,7 @@ import agreement.Models;
 import wang.com.jkxttest.DataInfo;
 import wang.com.jkxttest.HomePageActivity;
 
+import static wang.com.jkxttest.CrashHandler.TAG;
 import static wang.com.jkxttest.DataInfo.HexByteToStr;
 
 public class UDPReceiveThread extends Thread {
@@ -37,6 +39,7 @@ public class UDPReceiveThread extends Thread {
         }
         //while (true)
         try {
+            mSocket.setSoTimeout(1000);
             mSocket.receive(receivePacket);  //接收到数据包 阻塞式
             LastReceiveDate = new Date(System.currentTimeMillis()); //更新最后一次接收到数据包的时间
             String info = HexByteToStr(buf, DataInfo.agreement_len, "_");
@@ -44,8 +47,8 @@ public class UDPReceiveThread extends Thread {
             check_return_data(info); //处理接收到的数据
             //mSocket.close();
         } catch (Exception e) {
-            Logger.e("receive error");
-            e.printStackTrace();
+            Log.e(TAG, "Receive Error");
+            //e.printStackTrace();
             //break;
         }
     }

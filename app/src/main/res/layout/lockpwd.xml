@@ -1,27 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/beige"
-    android:orientation="vertical"
     tools:context="wang.com.jkxttest.HomePageActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_width="350dp"
+        android:layout_height="420dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_lock"
         android:orientation="vertical">
 
-
-        <wang.com.jkxttest.PasswordView
-            android:id="@+id/et_password"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="330dp"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            app:pv_color="@color/colorAccent" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="输入密码"
+                android:textColor="@color/white"
+                android:textSize="23sp" />
+
+            <wang.com.jkxttest.PasswordView
+                android:id="@+id/et_password"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                app:pv_color="@color/pv_background" />
+
+        </LinearLayout>
 
         <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
@@ -34,107 +50,71 @@
 
             <Button
                 android:id="@+id/btn_01"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="1" />
             　　
 
             <Button
                 android:id="@+id/btn_02"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="2" />
             　　　
 
             <Button
                 android:id="@+id/btn_03"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="3" />
 
             <Button
                 android:id="@+id/btn_04"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="4" />
 
             <Button
                 android:id="@+id/btn_05"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="5" />
             　　
 
             <Button
                 android:id="@+id/btn_06"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="6" />
             　　　
 
             <Button
                 android:id="@+id/btn_07"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="7" />
 
             <Button
                 android:id="@+id/btn_08"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="8" />
             　　
 
             <Button
                 android:id="@+id/btn_09"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="9" />
 
             <Button
                 android:id="@+id/btn_clear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
-                android:text="清除" />
+                style="@style/LockButtonStyle"
+                android:text="清空" />
 
             <Button
                 android:id="@+id/btn_00"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
+                style="@style/LockButtonStyle"
                 android:text="0" />
 
             <Button
                 android:id="@+id/btn_delete"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/input_button"
-                android:text="←" />
+                style="@style/LockButtonStyle"
+                android:text="删除" />
 
         </GridLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

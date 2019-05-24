@@ -18,13 +18,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:text="@string/headline"
             android:textColor="#FFE2EBF9"
-            android:textSize="50sp" />
+            android:textSize="40sp" />
 
         <LinearLayout
-            android:layout_width="350dp"
+            android:layout_width="280dp"
             android:layout_height="100dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
@@ -46,24 +46,24 @@
                     android:src="@drawable/input_red" />
 
                 <ImageButton
-                    android:id="@+id/btn_Mpower"
-                    android:layout_width="130dp"
+                    android:id="@+id/btn_setting"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"
                     android:background="@color/colorTransparent"
                     android:scaleType="centerInside"
-                    android:src="@drawable/off" />
+                    android:src="@drawable/setting" />
 
                 <ImageButton
-                    android:id="@+id/btn_power"
+                    android:id="@+id/btn_abouts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@color/colorTransparent"
                     android:scaleType="centerInside"
-                    android:src="@drawable/offall" />
+                    android:src="@drawable/abouts" />
 
             </LinearLayout>
 
@@ -82,18 +82,19 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:layout_width="150dp"
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
 
                     android:gravity="center_horizontal"
-                    android:text="设备电源"
+                    android:text="设置"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="大屏电源"
+                    android:gravity="center"
+                    android:text="关于"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
@@ -117,7 +118,7 @@
             <LinearLayout
                 android:layout_width="203dp"
                 android:layout_height="550dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="50dp"
                 android:orientation="vertical">
 
                 <ImageButton
@@ -173,6 +174,7 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/usb" />
 
+
             </LinearLayout>
 
             <LinearLayout
@@ -205,7 +207,7 @@
                         android:id="@+id/tv_min"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="328dp"
+                        android:layout_marginLeft="325dp"
                         android:text=""
                         android:textColor="#313123"
                         android:textSize="170sp" />
@@ -247,83 +249,83 @@
                     android:layout_marginTop="80dp">
 
                     <ImageButton
-                        android:id="@+id/btn_setting"
+                        android:id="@+id/btn_lock"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="@color/colorTransparent"
                         android:scaleType="centerInside"
-                        android:src="@drawable/setting" />
+                        android:src="@drawable/lock" />
 
                     <ImageButton
-                        android:id="@+id/btn_lock"
+                        android:id="@+id/btn_power"
                         android:layout_width="155dp"
                         android:layout_height="160dp"
                         android:layout_gravity="center"
                         android:background="@color/colorTransparent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/lock" />
+                        android:src="@drawable/offline" />
 
                     <ImageButton
-                        android:id="@+id/btn_abouts"
+                        android:id="@+id/btn_sleep"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="@color/colorTransparent"
                         android:scaleType="centerInside"
-                        android:src="@drawable/abouts" />
+                        android:src="@drawable/sleep" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="480dp"
-                android:layout_marginLeft="20dp"
+                android:layout_width="203dp"
+                android:layout_height="500dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/btn_mode1"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:layout_weight="1"
                     android:background="@color/colorTransparent"
                     android:scaleType="centerInside"
                     android:src="@drawable/mode1" />
 
                 <ImageButton
                     android:id="@+id/btn_mode2"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:layout_weight="1"
+                    android:layout_marginTop="30dp"
                     android:background="@color/colorTransparent"
                     android:scaleType="centerInside"
                     android:src="@drawable/mode2" />
 
                 <ImageButton
                     android:id="@+id/btn_mode3"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:layout_weight="1"
+                    android:layout_marginTop="30dp"
                     android:background="@color/colorTransparent"
                     android:scaleType="centerInside"
                     android:src="@drawable/mode3" />
 
                 <ImageButton
                     android:id="@+id/btn_mode4"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:layout_weight="1"
+                    android:layout_marginTop="30dp"
                     android:background="@color/colorTransparent"
                     android:scaleType="centerInside"
                     android:src="@drawable/mode4" />
 
                 <ImageButton
                     android:id="@+id/btn_mode5"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:layout_weight="1"
+                    android:layout_marginTop="30dp"
                     android:background="@color/colorTransparent"
                     android:scaleType="centerInside"
                     android:src="@drawable/mode5" />
@@ -341,7 +343,8 @@
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_sound"

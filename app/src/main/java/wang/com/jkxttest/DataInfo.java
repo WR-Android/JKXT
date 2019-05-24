@@ -10,10 +10,6 @@ public class DataInfo {
     public final static String DB_NAME = "Agreement.db";
     //数据库的地址
     public final static String DB_PATH = "/data/data/wang.com.jkxttest/databases/";
-    public static final int POWERCONNECT = 6;
-    public static final int MPOWERCONNECT = 7;
-    public static final int POWERDISCONNECT = 8;
-    public static final int MPOWERDISCONNECT = 9;
     public static boolean Thread_alive = true;
 
     public static String input1;
@@ -29,9 +25,10 @@ public class DataInfo {
     public static String delay_ip;
     public static int delay_port = 6548;
     public static String model_number = "";
+    public static boolean TimingState = false;
     public static boolean ConnectionState = false;
-    public static boolean MpowerState = false;
     public static boolean PowerState = false;
+    public static boolean DelayConnectionState = false;
     public static int agreement_len = 8;
     public static String lock_pwd = "1234";
     public static String ScreenSaveTime = "60";
@@ -41,6 +38,9 @@ public class DataInfo {
     public static final int DISCONNECTED = 3;
     public static final int INPUTCONNECTED = 4;
     public static final int SCREENSAVER = 5;
+    public static final int POWERCONNECT = 6;
+    public static final int POWERDISCONNECT = 7;
+    public static final int POWEROFFLINE = 8;
 
 
     //用separator分割的字符串 转换成byte数组
@@ -65,6 +65,63 @@ public class DataInfo {
         }
         buf = buf.substring(1);
         return buf;
+    }
+
+    public static String WeekToString(char week) {
+        String s = "";
+        if (week == (char) 0x7F) {
+            s = "每天";
+        } else if (week == (char) 0x1F) {
+            s = "工作日";
+        } else if (week == (char) 0x60) {
+            s = "周末";
+        } else {
+            s = "每周";
+            if ((week & 0x01) != (byte) 0x00) {
+                s += "一、";
+            }
+            if ((week & 0x01 << 1) != (byte) 0x00) {
+                s += "二、";
+            }
+            if ((week & 0x01 << 2) != (byte) 0x00) {
+                s += "三、";
+            }
+            if ((week & 0x01 << 3) != (byte) 0x00) {
+                s += "四、";
+            }
+            if ((week & 0x01 << 4) != (byte) 0x00) {
+                s += "五、";
+            }
+            if ((week & 0x01 << 5) != (byte) 0x00) {
+                s += "六、";
+            }
+            if ((week & 0x01 << 6) != (byte) 0x00) {
+                s += "日、";
+            }
+            // 删掉末尾的、
+            s = s.substring(0, s.length() - 1);
+        }
+        return s;
+    }
+
+    public static String GetStandardTime(String time){
+        String[] time_split = time.split(":");
+        int hour = Integer.parseInt(time_split[0]);
+        int minute = Integer.parseInt(time_split[1]);
+        StringBuilder sb=new StringBuilder();
+//        if (hour<10){
+//            sb.append("0"+hour);
+//        }else {
+//            sb.append(hour);
+//        }
+        sb.append(hour); //小时数 不补0
+        sb.append(":");
+        if (minute<10){
+            sb.append("0"+minute);
+        }else {
+            sb.append(minute);
+        }
+        return sb.toString();
     }
 
 }

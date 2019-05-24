@@ -1,64 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/beige"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_width="420dp"
+        android:layout_height="380dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_lock"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:padding="10dp"
-            android:text="设置屏保时间"
-            android:textColor="@color/palevioletred"
-            android:textSize="25dp" />
+            style="@style/SettingTitleStyle"
+            android:text="屏保" />
 
-        <EditText
-            android:id="@+id/et_ScreenSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:digits="0123456789"
-            android:gravity="left"
-            android:hint="请输入屏保时间(秒)"
-            android:inputType="none" />
+        <LinearLayout style="@style/SettingLinearLayoutStyle"
+            android:layout_marginTop="50dp"
+            android:layout_width="300dp">
 
-        <CheckBox
-            android:id="@+id/cb_startScreenSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="开启屏保" />
+            <TextView
+                style="@style/SettingTextStyle"
+                android:text="屏保时间：" />
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/et_ScreenSave"
+                style="@style/SettingETStyle"
+                android:layout_width="75dp"
+                android:layout_marginRight="10dp"
+                android:digits="0123456789"
+                android:gravity="left"
+                android:padding="7dp"
+                android:text="12345"
+                android:maxLength="5"
+                android:inputType="none" />
 
-            <Button
-                android:id="@+id/btn_ScreenSave"
-                android:layout_width="100dp"
-                android:layout_height="60dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/input_button"
-                android:text="保存"
-                android:textColor="@color/black"
-                android:textSize="25dp" />
+            <TextView
+                style="@style/SettingTextStyle"
+                android:text="(秒)"
+                />
 
         </LinearLayout>
 
+        <CheckBox
+            android:id="@+id/cb_startScreenSave"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:checked="false"
+            android:textColor="@color/white"
+            android:text="开启屏保"
+            android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/btn_ScreenSave"
+                style="@style/ConfirmButtonStyle"
+                android:layout_marginTop="50dp"
+                android:text="确定"
+                />
+
     </LinearLayout>
     　　
-</LinearLayout>
+</RelativeLayout>

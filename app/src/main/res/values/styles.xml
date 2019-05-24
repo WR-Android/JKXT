@@ -12,7 +12,7 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="ShareDialog"  parent="android:Theme.Dialog">
+    <style name="ShareDialog" parent="android:Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:background">@color/colorTransparent</item>
@@ -22,4 +22,102 @@
         <item name="android:backgroundDimAmount">0.7</item>
     </style>
 
+    <style name="SettingButtonStyle">
+        <item name="android:layout_width">130dp</item>
+        <item name="android:layout_height">90dp</item>
+    </style>
+
+    <style name="SettingButtonTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">23sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="LockButtonStyle">
+        <item name="android:layout_width">90dp</item>
+        <item name="android:layout_height">55dp</item>
+        <item name="android:background">@drawable/number_button</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="SettingTitleStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+    </style>
+
+    <style name="SettingTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="SettingLinearLayoutStyle">
+        <item name="android:layout_width">400dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="ConfirmButtonStyle">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/confirm_button</item>
+        <item name="android:textSize">25dp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="SettingETStyle">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:background">@drawable/input_box_style</item>
+        <item name="android:gravity">left</item>
+        <item name="android:padding">7dp</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">#A1A3A9</item>
+    </style>
+
+    <style name="RadioButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/week_radio</item>
+        <item name="android:button">@null</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+    </style>
+
+    <style name="wheelViewStyle_time">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="itemNumber">3</item>
+        <item name="lineColor">#aaaaaa</item>
+        <item name="lineHeight">1dp</item>
+        <item name="noEmpty">true</item>
+        <item name="normalTextColor">#888888</item>
+        <item name="normalTextSize">@dimen/text_size_normal</item>
+        <item name="selectedTextColor">@color/white</item>
+        <item name="selectedTextSize">@dimen/text_size_select</item>
+        <item name="unitHeight">@dimen/height_small</item>
+    </style>
+
 </resources>
+
+

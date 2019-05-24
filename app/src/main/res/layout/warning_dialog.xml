@@ -1,48 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/beige"
-    android:orientation="vertical">
+    >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="600dp"
+        android:layout_height="200dp"
         android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:background="@drawable/bg_warning"
+        android:layout_centerInParent="true">
 
         <TextView
             android:id="@+id/tv_warning"
+            style="@style/SettingTitleStyle"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            android:text="确认打开大屏电源？"
+            />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="40sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_confirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/input_button"
+                style="@style/ConfirmButtonStyle"
                 android:text="确定" />
 
             <Button
                 android:id="@+id/btn_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/input_button"
+                style="@style/ConfirmButtonStyle"
+                android:layout_marginLeft="30dp"
                 android:text="取消" />
         </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
