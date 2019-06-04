@@ -18,6 +18,14 @@ public class DataInfo {
     public static String input4;
     public static String input5;
     public static String input6;
+
+    public static String input1_Name;
+    public static String input2_Name;
+    public static String input3_Name;
+    public static String input4_Name;
+    public static String input5_Name;
+    public static String input6_Name;
+
     public static String last_input;
 
     public static String server_ip;
@@ -26,6 +34,7 @@ public class DataInfo {
     public static int delay_port = 6548;
     public static String model_number = "";
     public static boolean TimingState = false;
+    //public static boolean synTimeState = false;
     public static boolean ConnectionState = false;
     public static boolean PowerState = false;
     public static boolean DelayConnectionState = false;
@@ -41,6 +50,7 @@ public class DataInfo {
     public static final int POWERCONNECT = 6;
     public static final int POWERDISCONNECT = 7;
     public static final int POWEROFFLINE = 8;
+    public static final int COMPLETEEDIT = 9;
 
 
     //用separator分割的字符串 转换成byte数组
@@ -104,11 +114,11 @@ public class DataInfo {
         return s;
     }
 
-    public static String GetStandardTime(String time){
+    public static String GetStandardTime(String time) {
         String[] time_split = time.split(":");
         int hour = Integer.parseInt(time_split[0]);
         int minute = Integer.parseInt(time_split[1]);
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 //        if (hour<10){
 //            sb.append("0"+hour);
 //        }else {
@@ -116,9 +126,9 @@ public class DataInfo {
 //        }
         sb.append(hour); //小时数 不补0
         sb.append(":");
-        if (minute<10){
-            sb.append("0"+minute);
-        }else {
+        if (minute < 10) {
+            sb.append("0" + minute);
+        } else {
             sb.append(minute);
         }
         return sb.toString();

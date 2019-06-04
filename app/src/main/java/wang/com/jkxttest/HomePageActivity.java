@@ -1,134 +1,92 @@
 package wang.com.jkxttest;
 
-import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.yf_a64_api.YF_A64_API_Manager;
 import com.jaygoo.widget.OnRangeChangedListener;
 import com.jaygoo.widget.RangeSeekBar;
-import com.mcxtzhang.commonadapter.lvgv.CommonAdapter;
-import com.mcxtzhang.commonadapter.lvgv.ViewHolder;
 import com.orhanobut.logger.Logger;
 
 import org.litepal.LitePal;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import agreement.Models;
-import agreement.TimingLists;
+import mFragment.AboutsDialog;
+import mFragment.LockDialog;
+import mFragment.LockSettingDialog;
+import mFragment.ScreenSaveDialog;
+import mFragment.WarningDialog;
 import mThread.CheckConnectThread;
 import mThread.CheckInputThread;
 import mThread.DelayConnectThread;
-import mThread.DelayThread;
 import mThread.TimeThread;
 import mThread.UDPThread;
 import mThread.setTimingThread;
-import swipeMenu.SwipeBean;
-import swipeMenu.SwipeMenuLayout;
-import wheelView.FromToTimePicker;
+import mView.inputButton;
 
 import static agreement.CreateDataBase.create_database;
 import static wang.com.jkxttest.DataInfo.StrToHexByte;
 
 public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private CountTimer countTimerView;
+    public static CountTimer countTimerView;
     public static Handler mHandler;
-    private ImageButton btn_1;
-    private ImageButton btn_2;
-    private ImageButton btn_3;
-    private ImageButton btn_4;
-    private ImageButton btn_5;
-    private ImageButton btn_6;
+    private inputButton btn_1;
+    private inputButton btn_2;
+    private inputButton btn_3;
+    private inputButton btn_4;
+    private inputButton btn_5;
+    private inputButton btn_6;
     private ImageView img_connect_state;
     private ImageButton btn_setting;
     private ImageButton btn_lock;
     private ImageButton btn_abouts;
     private ImageButton btn_sleep;
-    private Dialog mDialog;
-    private Dialog ScreenSaverDialog;
-    private Button bt_confirm;
-    private Button bt_cancel;
-    private EditText et_ip;
-    private EditText et_port;
-    private Button btn_setSystem;
-    private Button btn_setScreenSave;
-    private Button btn_setLockPassword;
-    private Button btn_setIpAndPort;
-    private Button btn_lockonoff;
-    private Button btn_editInputName;
 
-    private PasswordView mPasswordView;
-    private final int[] ids = {
-            R.id.btn_00,
-            R.id.btn_01,
-            R.id.btn_02,
-            R.id.btn_03,
-            R.id.btn_04,
-            R.id.btn_05,
-            R.id.btn_06,
-            R.id.btn_07,
-            R.id.btn_08,
-            R.id.btn_09,
-            R.id.btn_clear,
-            R.id.btn_delete
-    };
-    private Button[] buttons = new Button[ids.length];
-    private Button btn_saveLockPwd;
-    private EditText et_lockpwd;
-    private EditText et_screenSave;
-    private CheckBox cb_startScreenSave;
-    private Button btn_screenSave;
+    private Button cover; //休眠覆盖全屏按钮
+
     private RangeSeekBar sound_seekbar;
     private TextView tv_sound;
     private TextView tv_date;
     private TextView tv_hour;
     private TextView tv_min;
     private TextView tv_week;
-    private EditText et_delay_ip;
+
     private ImageButton btn_power;
-    private TextView tv_warning;
-    private ImageButton btn_m1;
-    private ImageButton btn_m2;
-    private ImageButton btn_m3;
-    private ImageButton btn_m4;
-    private ImageButton btn_m5;
-    private Button abouts_confirm;
-    private TextView tv_version;
+
+    private Button btn_m1;
+    private Button btn_m2;
+    private Button btn_m3;
+    private Button btn_m4;
+    private Button btn_m5;
+
+
+    private YF_A64_API_Manager yfapi;
+    private GestureDetector mGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DataInfo.Thread_alive = true;   //线程开启标记
         Logger.init().hideThreadInfo();
+        yfapi = new YF_A64_API_Manager(this);
+        yfapi.yfsetNavigationBarVisibility(false);  //关闭导航栏
         setContentView(R.layout.homepage);
         try {
             if (!(new File(DataInfo.DB_PATH + DataInfo.DB_NAME).exists())) {    //判断数据库文件是否已存在
@@ -151,18 +109,42 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         new CheckInputThread().start();     //开input端口检测线程
         new setTimingThread().start();      //开定时任务发送线程
         update_input_view();//加载默认主界面布局
+        InitInputName();    //初始化端口名称
         DataInfo.last_input = DataInfo.input1;
-        initTime();//加载当前时间
+        initTime();//初始化获取当前时间日期
 
-        //查询网络继电器状态
-        DelayThread delayThread = new DelayThread();
-        delayThread.setDelaydata(StrToHexByte("FF_02_01_00_BB", "_"));
-        delayThread.start();
+        cover.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
+
+        mGestureDetector = new GestureDetector(HomePageActivity.this, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {//单击事件
+                return super.onSingleTapConfirmed(e);
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {//双击事件
+                cover.setVisibility(View.GONE);
+                countTimerView.start(); //休眠结束，开启定时
+                yfapi.yfSetLCDOn();
+                return super.onDoubleTap(e);
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {//长按事件
+                super.onLongPress(e);
+            }
+        });
 
         sound_seekbar.setOnRangeChangedListener(new OnRangeChangedListener() {  //声音滑块数值监听
             @Override
             public void onRangeChanged(RangeSeekBar view, float leftValue, float rightValue, boolean isFromUser) {
-                tv_sound.setText(String.valueOf(Float.valueOf(leftValue).intValue()) + "%");
+                tv_sound.setText("" + String.valueOf(Float.valueOf(leftValue).intValue()) + "%");
             }
 
             @Override
@@ -194,9 +176,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         if (!input_list.isEmpty()) {
 
             SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-            SharedPreferences.Editor edit = sp.edit();
-            edit.putString("model_number", DataInfo.model_number);
-            edit.commit();
+            sp.edit().putString("model_number", DataInfo.model_number).apply();
 
             DataInfo.input1 = input_list.get(0).getAction_name();
             DataInfo.input2 = input_list.get(1).getAction_name();
@@ -204,6 +184,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             DataInfo.input4 = input_list.get(3).getAction_name();
             DataInfo.input5 = input_list.get(4).getAction_name();
             DataInfo.input6 = input_list.get(5).getAction_name();
+
+            UpdateInputName();
 
             btn_1.setBackgroundResource(R.drawable.input_button);
             btn_2.setBackgroundResource(R.drawable.input_button);
@@ -214,17 +196,36 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
             res_id = getResources().getIdentifier(DataInfo.input1.toLowerCase(), "drawable", getPackageName());
             btn_1.setImageResource(res_id);
+            btn_1.setImgPadding(5);
             res_id = getResources().getIdentifier(DataInfo.input2.toLowerCase(), "drawable", getPackageName());
             btn_2.setImageResource(res_id);
+            btn_2.setImgPadding(5);
             res_id = getResources().getIdentifier(DataInfo.input3.toLowerCase(), "drawable", getPackageName());
             btn_3.setImageResource(res_id);
+            btn_3.setImgPadding(5);
             res_id = getResources().getIdentifier(DataInfo.input4.toLowerCase(), "drawable", getPackageName());
             btn_4.setImageResource(res_id);
+            btn_4.setImgPadding(5);
             res_id = getResources().getIdentifier(DataInfo.input5.toLowerCase(), "drawable", getPackageName());
             btn_5.setImageResource(res_id);
+            btn_5.setImgPadding(5);
             res_id = getResources().getIdentifier(DataInfo.input6.toLowerCase(), "drawable", getPackageName());
             btn_6.setImageResource(res_id);
+            btn_6.setImgPadding(5);
         }
+    }
+
+    private void UpdateInputName() {
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+        btn_1.setText(sp.getString("input1_Name", DataInfo.input1));
+        btn_2.setText(sp.getString("input2_Name", DataInfo.input2));
+        btn_3.setText(sp.getString("input3_Name", DataInfo.input3));
+        btn_4.setText(sp.getString("input4_Name", DataInfo.input4));
+        btn_5.setText(sp.getString("input5_Name", DataInfo.input5));
+        btn_6.setText(sp.getString("input6_Name", DataInfo.input6));
+
+        // TODO: 2019/6/3 文字颜色跟随端口图案
+        //btn_1.setTextColor(getResources().getIdentifier(DataInfo.input1.toLowerCase(),"colors",getPackageName()));
     }
 
     private void initView() {
@@ -233,6 +234,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btn_lock = findViewById(R.id.btn_lock);
         btn_abouts = findViewById(R.id.btn_abouts);
         btn_sleep = findViewById(R.id.btn_sleep);
+        cover = findViewById(R.id.Cover);
         img_connect_state = findViewById(R.id.img_connect_state);
         tv_date = findViewById(R.id.tv_date);
         tv_hour = findViewById(R.id.tv_hour);
@@ -289,63 +291,108 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             DataInfo.server_ip = sp.getString("ip", "192.168.1.223");
         } else {
             DataInfo.server_ip = "192.168.1.223";
-            sp.edit().putString("ip", "192.168.1.223").commit();
+            sp.edit().putString("ip", "192.168.1.223").apply();
         }
 
         if (sp.getString("port", null) != null) {
             DataInfo.server_port = Integer.parseInt(sp.getString("port", "20108"));
         } else {
             DataInfo.server_port = 20108;
-            sp.edit().putString("port", "20108").commit();
+            sp.edit().putString("port", "20108").apply();
         }
 
         if (sp.getString("delay_ip", null) != null) {
             DataInfo.delay_ip = sp.getString("delay_ip", "192.168.1.245");
         } else {
             DataInfo.delay_ip = "192.168.1.245";
-            sp.edit().putString("delay_ip", "192.168.1.245").commit();
+            sp.edit().putString("delay_ip", "192.168.1.245").apply();
         }
 
         if (sp.getString("pwd", null) != null) {
             DataInfo.lock_pwd = sp.getString("pwd", "1234");
         } else {
             DataInfo.lock_pwd = "1234";
-            sp.edit().putString("pwd", "1234").commit();
+            sp.edit().putString("pwd", "1234").apply();
         }
 
         if (sp.getString("ScreenSaveTime", null) != null) {
             DataInfo.ScreenSaveTime = sp.getString("ScreenSaveTime", "60");
         } else {
             DataInfo.ScreenSaveTime = "60";
-            sp.edit().putString("ScreenSaveTime", "60").commit();
+            sp.edit().putString("ScreenSaveTime", "60").apply();
         }
 
         if (sp.getBoolean("ScreenSaveChecked", false)) {
             DataInfo.ScreenSaveChecked = sp.getBoolean("ScreenSaveChecked", false);
         } else {
             DataInfo.ScreenSaveChecked = false;
-            sp.edit().putBoolean("ScreenSaveChecked", false).commit();
+            sp.edit().putBoolean("ScreenSaveChecked", false).apply();
         }
 
         if (sp.getString("model_number", null) != null) {
             DataInfo.model_number = sp.getString("model_number", "600");
         } else {
             DataInfo.model_number = "600";
-            sp.edit().putString("model_number", "600").commit();
+            sp.edit().putString("model_number", "600").apply();
         }
 
         if (sp.getBoolean("TimingState", false)) { //定时任务设置成功标志位
             DataInfo.TimingState = sp.getBoolean("TimingState", false);
         } else {
             DataInfo.TimingState = false;
-            sp.edit().putBoolean("TimingState", false).commit();
+            sp.edit().putBoolean("TimingState", false).apply();
+        }
+    }
+
+    private void InitInputName() {
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+        if (sp.getString("input1_Name", null) != null) {
+            DataInfo.input1_Name = sp.getString("input1_Name", "HDMI");
+        } else {
+            DataInfo.input1_Name = DataInfo.input1;
+            sp.edit().putString("input1_Name", DataInfo.input1_Name).apply();
+        }
+
+        if (sp.getString("input2_Name", null) != null) {
+            DataInfo.input2_Name = sp.getString("input2_Name", "HDMI");
+        } else {
+            DataInfo.input2_Name = DataInfo.input2;
+            sp.edit().putString("input2_Name", DataInfo.input2_Name).apply();
+        }
+
+        if (sp.getString("input3_Name", null) != null) {
+            DataInfo.input3_Name = sp.getString("input3_Name", "HDMI");
+        } else {
+            DataInfo.input3_Name = DataInfo.input3;
+            sp.edit().putString("input3_Name", DataInfo.input3_Name).apply();
+        }
+
+        if (sp.getString("input4_Name", null) != null) {
+            DataInfo.input4_Name = sp.getString("input4_Name", "HDMI");
+        } else {
+            DataInfo.input4_Name = DataInfo.input4;
+            sp.edit().putString("input4_Name", DataInfo.input4_Name).apply();
+        }
+
+        if (sp.getString("input5_Name", null) != null) {
+            DataInfo.input5_Name = sp.getString("input5_Name", "HDMI");
+        } else {
+            DataInfo.input5_Name = DataInfo.input5;
+            sp.edit().putString("input5_Name", DataInfo.input5_Name).apply();
+        }
+
+        if (sp.getString("input6_Name", null) != null) {
+            DataInfo.input6_Name = sp.getString("input6_Name", "HDMI");
+        } else {
+            DataInfo.input6_Name = DataInfo.input6;
+            sp.edit().putString("input6_Name", DataInfo.input6_Name).apply();
         }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_1:
+            case R.id.btn_1:        //端口切换按钮 1-6
                 ChangeInput(DataInfo.input1);
                 break;
             case R.id.btn_2:
@@ -374,11 +421,14 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.btn_power:
                 if (DataInfo.DelayConnectionState)
-                    showWarningDialog_power();  //网络继电器开启关闭界面
+                    showWarningDialog();  //网络继电器开启关闭确认界面
                 break;
             case R.id.btn_sleep:
-                // TODO: 2019/5/17 休眠操作
-                Toast.makeText(this, "休眠", Toast.LENGTH_SHORT).show();
+                //休眠操作 仅关闭背光源
+                yfapi.yfSetLCDOff();
+                cover.setVisibility(View.VISIBLE);
+                countTimerView.cancel();    //休眠开始，关闭屏保定时器
+                //Toast.makeText(this, "休眠", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -405,876 +455,43 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btn_6.setBackgroundResource(R.drawable.input_button);
 
         if (input.equals(DataInfo.input1)) {
-            btn_1.setBackgroundResource(R.drawable.input_button_connect);
+            btn_1.setBackgroundResource(R.drawable.input_connected);
         } else if (input.equals(DataInfo.input2)) {
-            btn_2.setBackgroundResource(R.drawable.input_button_connect);
+            btn_2.setBackgroundResource(R.drawable.input_connected);
         } else if (input.equals(DataInfo.input3)) {
-            btn_3.setBackgroundResource(R.drawable.input_button_connect);
+            btn_3.setBackgroundResource(R.drawable.input_connected);
         } else if (input.equals(DataInfo.input4)) {
-            btn_4.setBackgroundResource(R.drawable.input_button_connect);
+            btn_4.setBackgroundResource(R.drawable.input_connected);
         } else if (input.equals(DataInfo.input5)) {
-            btn_5.setBackgroundResource(R.drawable.input_button_connect);
+            btn_5.setBackgroundResource(R.drawable.input_connected);
         } else if (input.equals(DataInfo.input6)) {
-            btn_6.setBackgroundResource(R.drawable.input_button_connect);
+            btn_6.setBackgroundResource(R.drawable.input_connected);
         }
     }
 
-    private void showWarningDialog_power() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.warning_dialog, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-        initWarningDialog_powerView(dialogView);
-
-        if (DataInfo.PowerState)
-            tv_warning.setText("确认关闭大屏电源？");
-        else
-            tv_warning.setText("确认打开大屏电源？");
-
-        initWarningDialog_powerListener();
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-    private void initWarningDialog_powerView(View view) {
-        bt_confirm = view.findViewById(R.id.btn_confirm);
-        bt_cancel = view.findViewById(R.id.btn_cancel);
-        tv_warning = view.findViewById(R.id.tv_warning);
-    }
-
-    private void initWarningDialog_powerListener() {
-        bt_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                if (DataInfo.PowerState) {
-                    //发送继电器1断开指令
-                    DelayThread delayThread = new DelayThread();
-                    delayThread.setDelaydata(StrToHexByte("FF_03_01_0A_BB", "_"));
-                    delayThread.start();
-                } else {
-                    //发送继电器1吸合指令
-                    DelayThread delayThread = new DelayThread();
-                    delayThread.setDelaydata(StrToHexByte("FF_03_01_0B_BB", "_"));
-                    delayThread.start();
-                }
-                mDialog.dismiss();
-            }
-        });
-        bt_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-            }
-        });
+    private void showWarningDialog() {
+        WarningDialog warningDialog = new WarningDialog();
+        warningDialog.show(getSupportFragmentManager(), "warning");
     }
 
     private void showLockSettingDialog() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.lockpwd, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-//        lp.width = 300;
-//        lp.height = 300;
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-
-        mPasswordView = dialogView.findViewById(R.id.et_password);
-        mPasswordView.addOnPasswordChangedListener(new PasswordView.OnPasswordChangedListener() {
-            @Override
-            public void onPasswordChanged(String password) {
-            }
-
-            @Override
-            public void onPasswordFinish(String password) {
-                if (DataInfo.lock_pwd.equals(password)) {
-                    mDialog.dismiss();
-                    showSettingDialog();
-                } else {
-                    mPasswordView.clearPassword();
-                    Toast.makeText(HomePageActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-        initLockDialogListener(dialogView);
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-    private void showSettingDialog() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.setting_dialog, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-        initSettingDialogView(dialogView);
-        initSettingDialogListener();
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-    private void initSettingDialogView(View view) {
-        btn_setIpAndPort = view.findViewById(R.id.setIpAndPort);
-        btn_setLockPassword = view.findViewById(R.id.setLockPassword);
-        btn_setScreenSave = view.findViewById(R.id.setScreenSave);
-        btn_setSystem = view.findViewById(R.id.setSystem);
-        btn_lockonoff = view.findViewById(R.id.lockonoff);
-        btn_editInputName = view.findViewById(R.id.editInputName);
-        TouchScaleAnim.attachView(btn_setIpAndPort);
-        TouchScaleAnim.attachView(btn_setLockPassword);
-        TouchScaleAnim.attachView(btn_setScreenSave);
-        TouchScaleAnim.attachView(btn_setSystem);
-        TouchScaleAnim.attachView(btn_lockonoff);
-        TouchScaleAnim.attachView(btn_editInputName);
-    }
-
-    private void initSettingDialogListener() {
-        btn_setIpAndPort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-                showIpPortDialog();
-            }
-        });
-
-        btn_setLockPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-                showSetPasswordDialog();
-            }
-        });
-
-        btn_setScreenSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-                showSetScreenSaveDialog();
-            }
-        });
-
-        btn_setSystem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                HomePageActivity.this.startActivity(new Intent(Settings.ACTION_SETTINGS));
-                mDialog.dismiss();
-            }
-        });
-
-        btn_lockonoff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-                showTimingListDialog();  //定时开关列表界面
-            }
-        });
-
-        btn_editInputName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-                //showEditInputNameDialog();
-            }
-        });
-    }
-
-    public void showTimingListDialog() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.timinglist, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = 750;
-        lp.height = 550;
-//        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-
-        //ListView数据添加交互显示
-        final ListView TimingListView = dialogView.findViewById(R.id.TimingList);
-        TimingListView.setDivider(null);
-        //初始化ListView数据
-        final List<SwipeBean> mData = new ArrayList<>();
-        List<TimingLists> lists = LitePal.findAll(TimingLists.class);
-        int i = 1;
-        for (TimingLists list : lists) {
-            mData.add(new SwipeBean(list.getId(), "定时" + i, list.getOpentime(), list.getClosetime(), list.getWeek()));
-            i++;
-        }
-        TimingListView.setAdapter(new CommonAdapter<SwipeBean>(this, mData, R.layout.item_timing) {
-            @Override
-            public void convert(final ViewHolder viewHolder, SwipeBean swipeBean, final int position) {
-                //((SwipeMenuLayout)holder.getConvertView()).setIos(false);//这句话关掉IOS阻塞式交互效果
-                viewHolder.setText(R.id.tv_TimingId, swipeBean.timingId);
-                viewHolder.setText(R.id.tv_OpenTime, DataInfo.GetStandardTime(swipeBean.openTime));
-                viewHolder.setText(R.id.tv_CloseTime, DataInfo.GetStandardTime(swipeBean.closeTime));
-                viewHolder.setText(R.id.tv_TimingWeek, DataInfo.WeekToString(swipeBean.timingWeek));
-                viewHolder.setOnClickListener(R.id.itemLL, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //TimingListView.getChildAt(position).setSelected(true);
-                        Toast.makeText(HomePageActivity.this, "position:" + position, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                viewHolder.setOnClickListener(R.id.btnDelete, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(HomePageActivity.this, "删除:" + position, Toast.LENGTH_SHORT).show();
-                        LitePal.delete(TimingLists.class, mDatas.get(position).id); //删除数据库表中数据
-                        //在ListView里，点击侧滑菜单上的选项时，如果想让擦花菜单同时关闭，调用这句话
-                        ((SwipeMenuLayout) viewHolder.getConvertView()).quickClose();
-                        mDatas.remove(position);
-                        notifyDataSetChanged(); //刷新item内容
-                        DataInfo.TimingState = false;   //设置标志让线程 发送定时任务
-                    }
-                });
-                viewHolder.setOnClickListener(R.id.btnEdit, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) { //编辑列表中数据
-                        mDialog.dismiss();
-                        showTimingDialog(mDatas.get(position).openTime, mDatas.get(position).closeTime, mData.get(position).timingWeek, mDatas.get(position).id);
-                    }
-                });
-            }
-        });
-
-        //添加按钮
-        Button btn_addTiming = dialogView.findViewById(R.id.btn_addTiming);
-        btn_addTiming.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-                showTimingDialog("8:00", "22:00", (char) 0x00, -1);
-            }
-        });
-
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-
-    /**
-     * @param fromTime 开机时间
-     * @param toTime   关机时间
-     * @param EditFlag 编辑标志  -1：在数据库添加定时
-     *                 other：编辑数据库已有EditFlag位置的定时
-     */
-    public void showTimingDialog(String fromTime, String toTime, char week, final int EditFlag) {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.time_picker, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = 750;
-        lp.height = 550;
-        //lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        //lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-
-        FromToTimePicker fromToTimePicker = dialogView.findViewById(R.id.timePicker);
-        fromToTimePicker.setOnResultListener(new FromToTimePicker.OnResultListener() {
-            @Override
-            public void onConfirm(int fromHour, int fromMinute, int toHour, int toMinute, char week) {
-                countTimerView.cancel();
-                countTimerView.start();
-                //数据库添加或修改数据
-                if (EditFlag == -1) {
-                    //添加数据到数据库
-                    TimingLists lists = new TimingLists();
-                    lists.setOpentime(fromHour + ":" + fromMinute);
-                    lists.setClosetime(toHour + ":" + toMinute);
-                    lists.setWeek(week);
-                    lists.save();
-                } else {
-                    //修改数据
-                    ContentValues values = new ContentValues();
-                    values.put("opentime", fromHour + ":" + fromMinute);
-                    values.put("closetime", toHour + ":" + toMinute);
-                    values.put("week", String.valueOf(week));
-                    LitePal.update(TimingLists.class, values, EditFlag);
-                }
-                DataInfo.TimingState = false;//任务更改标志
-                mDialog.dismiss();
-                showTimingListDialog();
-                //Toast.makeText(HomePageActivity.this, "From " + fromHour + ":" + fromMinute + " To " + toHour + ":" + toMinute + " Week " + (byte) week, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancel() {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-                showTimingListDialog();
-                //Toast.makeText(HomePageActivity.this, "Canceled", Toast.LENGTH_SHORT).show();
-            }
-        });
-        //fromToTimePicker.setCurrentDate(TimeUtil.getTimeString(), TimeUtil.addTime(TimeUtil.getTimeString(), "8:00").getTime());
-        fromToTimePicker.setCurrentDate(fromTime, toTime, week);
-
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-    public void showIpPortDialog() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.ipportsetdialog, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-        initIpPortDialogView(dialogView);
-        //将sp中存储的ip port显示
-        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-        et_ip.setText(sp.getString("ip", null));
-        et_port.setText(sp.getString("port", null));
-        et_delay_ip.setText(sp.getString("delay_ip", null));
-        initIpPortDialogListener();
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-    private void initIpPortDialogView(View view) {
-        et_ip = (EditText) view.findViewById(R.id.et_ip);
-        et_port = (EditText) view.findViewById(R.id.et_port);
-        et_delay_ip = (EditText) view.findViewById(R.id.et_delay_ip);
-        bt_confirm = (Button) view.findViewById(R.id.btn_confirm);
-        bt_cancel = (Button) view.findViewById(R.id.btn_cancel);
-    }
-
-    private void initIpPortDialogListener() {
-        bt_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                if (TextUtils.isEmpty(et_ip.getText())) {
-                    Toast.makeText(HomePageActivity.this, "IP地址不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(et_port.getText())) {
-                    Toast.makeText(HomePageActivity.this, "端口号不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(et_delay_ip.getText())) {
-                    Toast.makeText(HomePageActivity.this, "网络继电器IP地址不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                DataInfo.server_ip = et_ip.getText().toString().trim();
-                DataInfo.server_port = Integer.parseInt(et_port.getText().toString().trim());
-                DataInfo.delay_ip = et_delay_ip.getText().toString().trim();
-                SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-                SharedPreferences.Editor edit = sp.edit();
-                edit.putString("ip", DataInfo.server_ip);
-                edit.putString("port", String.valueOf(DataInfo.server_port));
-                edit.putString("delay_ip", DataInfo.delay_ip);
-                edit.commit();
-                mDialog.dismiss();
-            }
-        });
-        bt_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-            }
-        });
-    }
-
-    private void showSetPasswordDialog() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.setlockpwd, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-        initSetPasswordDialogView(dialogView);
-        //将sp中存储的密码pwd显示
-        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-        et_lockpwd.setText(sp.getString("pwd", null));
-        initSetPasswordDialogListener();
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-    private void initSetPasswordDialogView(View view) {
-        et_lockpwd = (EditText) view.findViewById(R.id.et_lockpwd);
-        btn_saveLockPwd = (Button) view.findViewById(R.id.saveLockPwd);
-    }
-
-    private void initSetPasswordDialogListener() {
-        btn_saveLockPwd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                countTimerView.cancel();
-                countTimerView.start();
-                if (TextUtils.isEmpty(et_lockpwd.getText())) {
-                    Toast.makeText(HomePageActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String s = et_lockpwd.getText().toString().trim();
-                if (s.length() != 4) {
-                    Toast.makeText(HomePageActivity.this, "密码长度错误，请输入四位密码", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                DataInfo.lock_pwd = et_lockpwd.getText().toString().trim();
-                SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-                SharedPreferences.Editor edit = sp.edit();
-                edit.putString("pwd", DataInfo.lock_pwd);
-                edit.commit();
-                mDialog.dismiss();
-            }
-        });
-    }
-
-    private void showSetScreenSaveDialog() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.setscreensave_dialog, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-//        lp.width = 300;
-//        lp.height = 300;
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-        initSetScreenSaveDialogView(dialogView);
-        //将sp中存储的密码pwd显示
-        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-        et_screenSave.setText(DataInfo.ScreenSaveTime);
-        cb_startScreenSave.setChecked(DataInfo.ScreenSaveChecked);
-        initSetScreenSaveDialogListener();
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
-    }
-
-    private void initSetScreenSaveDialogView(View view) {
-        et_screenSave = (EditText) view.findViewById(R.id.et_ScreenSave);
-        cb_startScreenSave = (CheckBox) view.findViewById(R.id.cb_startScreenSave);
-        btn_screenSave = (Button) view.findViewById(R.id.btn_ScreenSave);
-    }
-
-    private void initSetScreenSaveDialogListener() {
-        btn_screenSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(et_screenSave.getText())) {
-                    Toast.makeText(HomePageActivity.this, "屏保时间不能为空", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String s = et_screenSave.getText().toString().trim();
-                boolean checked = cb_startScreenSave.isChecked();
-                if ("0".equals(s)) {
-                    DataInfo.ScreenSaveChecked = false;
-                    checked = false;
-                }
-                if (checked) {
-                    Toast.makeText(HomePageActivity.this, "屏保开启", Toast.LENGTH_SHORT).show();
-                    countTimerView.cancel();
-                    countTimerView = new CountTimer(Long.parseLong(s) * 1000, 1000, HomePageActivity.this);
-                    countTimerView.start();
-                } else {
-                    Toast.makeText(HomePageActivity.this, "屏保关闭", Toast.LENGTH_SHORT).show();
-                }
-                DataInfo.ScreenSaveChecked = checked;
-                DataInfo.ScreenSaveTime = s;
-                SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-                SharedPreferences.Editor edit = sp.edit();
-                edit.putString("ScreenSaveTime", s);
-                edit.putBoolean("ScreenSaveChecked", checked);
-                edit.commit();
-                mDialog.dismiss();
-            }
-        });
-    }
-
-    private void showScreenSaveDialog() {
-        //1.创建一个Dialog对象
-        ScreenSaverDialog = new Dialog(this);
-        //去除标题栏
-        ScreenSaverDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.screensaver_dialog, null);
-        //将自定义布局设置进去
-        ScreenSaverDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        ScreenSaverDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL);
-        ScreenSaverDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ScreenSaverDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        ScreenSaverDialog.show();
-
-        //设置点击其它地方消失Dialog
-        ScreenSaverDialog.setCancelable(true);
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                ScreenSaverDialog.dismiss();
-                return false;
-            }
-        });
+        LockSettingDialog lockSettingDialog = new LockSettingDialog();
+        lockSettingDialog.show(getSupportFragmentManager(), "LockSetting");
     }
 
     private void showLockDialog() {
-
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.lockpwd, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(false);
-        mPasswordView = (PasswordView) dialogView.findViewById(R.id.et_password);
-        mPasswordView.addOnPasswordChangedListener(new PasswordView.OnPasswordChangedListener() {
-            @Override
-            public void onPasswordChanged(String password) {
-            }
-
-            @Override
-            public void onPasswordFinish(String password) {
-                if (DataInfo.lock_pwd.equals(password)) {
-                    mDialog.dismiss();
-                } else {
-                    mPasswordView.clearPassword();
-                    Toast.makeText(HomePageActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-        initLockDialogListener(dialogView);
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
+        LockDialog lockDialog = new LockDialog();
+        lockDialog.show(getSupportFragmentManager(), "Lock");
     }
 
-    private void initLockDialogListener(View view) {
-        for (int i = 0; i < ids.length; i++) {
-            buttons[i] = (Button) view.findViewById(ids[i]);
-            buttons[i].setOnClickListener(listener);
-        }
+    private void showScreenSaveDialog() {
+        ScreenSaveDialog screenSaveDialog = new ScreenSaveDialog();
+        screenSaveDialog.show(getSupportFragmentManager(), "ScreenSave");
     }
-
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.btn_delete) {
-                mPasswordView.delete();
-            } else if (v.getId() == R.id.btn_clear) {
-                mPasswordView.clearPassword();
-            } else {
-                Button button = (Button) v;
-                String input = button.getText().toString();
-                mPasswordView.input(input);
-            }
-            countTimerView.cancel();
-            countTimerView.start();
-        }
-    };
 
     private void showAboutsDialog() {
-        //1.创建一个Dialog对象
-        mDialog = new Dialog(this, R.style.ShareDialog);
-        //去除标题栏
-        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //2.填充布局
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.abouts_dialog, null);
-        //将自定义布局设置进去
-        mDialog.setContentView(dialogView);
-        //3.设置指定的宽高
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        //注意要在Dialog show之后，再将宽高属性设置进去，才有效果
-        mDialog.show();
-        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.getWindow().setAttributes(lp);
-        //设置点击其它地方消失Dialog
-        mDialog.setCancelable(true);
-        String versionName = "";
-        tv_version = dialogView.findViewById(R.id.tv_version);
-        try {
-            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            Logger.e("VersionName Achieve Error");
-            e.printStackTrace();
-        }
-        tv_version.setText("版本：" + versionName);
-        abouts_confirm = dialogView.findViewById(R.id.abouts_confirm);
-        abouts_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                countTimerView.cancel();
-                countTimerView.start();
-                mDialog.dismiss();
-            }
-        });
-
-        dialogView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                countTimerView.cancel();
-                countTimerView.start();
-                return false;
-            }
-        });
-        mDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                countTimerView.cancel();
-                countTimerView.start();
-            }
-        });
+        AboutsDialog aboutsDialog = new AboutsDialog();
+        aboutsDialog.show(getSupportFragmentManager(), "AboutsDialog");
     }
 
     public void MyHandler() {
@@ -1293,23 +510,26 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                         img_connect_state.setImageResource(R.drawable.input_green);
                         update_input_view();    //动态加载端口布局
                         break;
-                    case DataInfo.DISCONNECTED:
+                    case DataInfo.DISCONNECTED:   //设备离线状态
                         img_connect_state.setImageResource(R.drawable.input_red);
                         break;
-                    case DataInfo.INPUTCONNECTED:
+                    case DataInfo.INPUTCONNECTED:   //刷新按钮连接状态
                         connection_input(msg.getData().getString("input"));
                         break;
                     case DataInfo.SCREENSAVER:  //开启屏保
                         showScreenSaveDialog();
                         break;
-                    case DataInfo.POWERCONNECT:
+                    case DataInfo.POWERCONNECT: //网络继电器开启状态
                         btn_power.setImageResource(R.drawable.on);
                         break;
-                    case DataInfo.POWERDISCONNECT:
+                    case DataInfo.POWERDISCONNECT:  //网络继电器关闭状态
                         btn_power.setImageResource(R.drawable.off);
                         break;
-                    case DataInfo.POWEROFFLINE:
+                    case DataInfo.POWEROFFLINE: //网络继电器离线
                         btn_power.setImageResource(R.drawable.offline);
+                        break;
+                    case DataInfo.COMPLETEEDIT: //端口名称编辑完成
+                        UpdateInputName(); //刷新端口名称
                         break;
                     default:
                         break;
@@ -1318,47 +538,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         };
     }
 
-    public static void sendTimingList() {
-        //设置网络继电器周循环定时任务
-        List<TimingLists> all = LitePal.findAll(TimingLists.class);
-        byte[] TimingData = new byte[all.size() * 14 + 4];
-        if (all.isEmpty()) {
-            //定时任务为空
-            DelayThread delayThread = new DelayThread();
-            delayThread.setDelaydata(StrToHexByte("FF_0A_01_00_BB", "_"));
-            delayThread.start();
-            return;
-        }
-        int i = 0;
-        TimingData[i++] = (byte) 0xFF;    //开始位
-        TimingData[i++] = (byte) 0x0A;    //功能标志位
-        TimingData[i++] = (byte) ((all.size() * 14) & 0xff); //指令长度
-        for (TimingLists buf : all) {
-            String[] open = buf.getOpentime().split(":");
-            String[] close = buf.getClosetime().split(":");
-
-            TimingData[i++] = (byte) (Integer.valueOf(open[0]) & 0xff); //开机时间：时
-            TimingData[i++] = (byte) (Integer.valueOf(open[1]) & 0xff); //开机时间：分
-            TimingData[i++] = (byte) 0x00;                                 //开机时间：秒
-            TimingData[i++] = (byte) 0x01;//继电器控制位
-            TimingData[i++] = (byte) 0x01;//设置开关继电器的状态
-            TimingData[i++] = (byte) (buf.getWeek() & 0xff);//设置循环周期
-            TimingData[i++] = (byte) 0x01;//定时功能开关
-
-            TimingData[i++] = (byte) (Integer.valueOf(close[0]) & 0xff); //关机时间：时
-            TimingData[i++] = (byte) (Integer.valueOf(close[1]) & 0xff); //关机时间：分
-            TimingData[i++] = (byte) 0x00;                                  //关机时间：秒
-            TimingData[i++] = (byte) 0x01;//继电器控制位
-            TimingData[i++] = (byte) 0x00;//设置开关继电器的状态
-            TimingData[i++] = (byte) (buf.getWeek() & 0xff);//设置循环周期
-            TimingData[i++] = (byte) 0x01;//定时功能开关
-        }
-        TimingData[i] = (byte) 0xBB; //结束位
-
-        //发送定时任务
-        DelayThread delayThread = new DelayThread();
-        delayThread.setDelaydata(TimingData);
-        delayThread.start();
+    public static void TimerRestart() {
+        countTimerView.cancel();
+        countTimerView.start();
     }
 
     private void timeStart() {
@@ -1387,8 +569,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        countTimerView.cancel();
-        countTimerView.start();
+        TimerRestart();
         return super.onKeyDown(keyCode, event);
     }
 

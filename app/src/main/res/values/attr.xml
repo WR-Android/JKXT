@@ -10,7 +10,7 @@
 
     <declare-styleable name="WheelView">
         <attr name="unitHeight" format="dimension" />
-        <attr name="itemNumber" format="integer"/>
+        <attr name="itemNumber" format="integer" />
 
         <attr name="normalTextColor" format="color" />
         <attr name="normalTextSize" format="dimension" />
@@ -21,17 +21,28 @@
         <attr name="lineColor" format="color" />
         <attr name="lineHeight" format="dimension" />
 
-        <attr name="noEmpty" format="boolean"/>
-        <attr name="isEnable" format="boolean"/>
+        <attr name="noEmpty" format="boolean" />
+        <attr name="isEnable" format="boolean" />
 
         <attr name="maskDarkColor" format="color" />
         <attr name="maskLightColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="SwipeMenuLayout">
-        <attr name="swipeEnable" format="boolean"/>
-        <attr name="ios" format="boolean"/>
-        <attr name="leftSwipe" format="boolean"/>
+        <attr name="swipeEnable" format="boolean" />
+        <attr name="ios" format="boolean" />
+        <attr name="leftSwipe" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="InputButtonItem">
+        <attr name="text" format="string" />
+        <attr name="text_color" format="color" />
+        <attr name="text_size" format="dimension" />
+        <attr name="image_src" format="reference" />
+        <attr name="bg_src" format="reference" />
+        <attr name="image_bg" format="reference" />
+        <attr name="image_height" format="dimension"/>
+        <attr name="image_width" format="dimension" />
     </declare-styleable>
 
 </resources>

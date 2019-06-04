@@ -10,7 +10,7 @@ public class Models extends LitePalSupport {
 
     private int id;     //设备ID
     private String model_name;
-    private String action_name;     //操作名称-->(mode)mode1 mode2 mode3 ...  (input)CV1 CV2 HDMI VGA1 VGA2 ...(check) check_state_1 ...
+    private String action_name;     //操作名称-->(mode)mode1 mode2 mode3 ...  (input)CV1 cv2 hdmi VGA1 VGA2 ...(check) check_state_1 ...
     private String action_type;
     private String send_data;       //操作发送协议
     private String return_data;     //操作返回协议

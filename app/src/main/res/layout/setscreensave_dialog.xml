@@ -14,9 +14,10 @@
             style="@style/SettingTitleStyle"
             android:text="屏保" />
 
-        <LinearLayout style="@style/SettingLinearLayoutStyle"
-            android:layout_marginTop="50dp"
-            android:layout_width="300dp">
+        <LinearLayout
+            style="@style/SettingLinearLayoutStyle"
+            android:layout_width="300dp"
+            android:layout_marginTop="50dp">
 
             <TextView
                 style="@style/SettingTextStyle"
@@ -29,15 +30,14 @@
                 android:layout_marginRight="10dp"
                 android:digits="0123456789"
                 android:gravity="left"
-                android:padding="7dp"
-                android:text="12345"
+                android:inputType="number"
                 android:maxLength="5"
-                android:inputType="none" />
+                android:padding="7dp"
+                android:text="12345" />
 
             <TextView
                 style="@style/SettingTextStyle"
-                android:text="(秒)"
-                />
+                android:text="(秒)" />
 
         </LinearLayout>
 
@@ -47,16 +47,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:checked="false"
-            android:textColor="@color/white"
+            android:buttonTint="@color/white"
             android:text="开启屏保"
-            android:textSize="20sp"/>
+            android:textColor="@color/white"
+            android:textSize="20sp" />
 
-            <Button
-                android:id="@+id/btn_ScreenSave"
-                style="@style/ConfirmButtonStyle"
-                android:layout_marginTop="50dp"
-                android:text="确定"
-                />
+        <Button
+            android:id="@+id/btn_ScreenSave"
+            style="@style/ConfirmButtonStyle"
+            android:layout_marginTop="50dp"
+            android:text="确定" />
 
     </LinearLayout>
     　　

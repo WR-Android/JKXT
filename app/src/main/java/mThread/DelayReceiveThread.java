@@ -46,7 +46,7 @@ public class DelayReceiveThread extends Thread {
         //处理获得网络继电器返回的数据
         Message msg1 = HomePageActivity.mHandler.obtainMessage();
         //Logger.d(HexByteToStr(data,5,"_"));
-        if ((byte) (data[1] & 0xFF) == (byte) 0x02 || (byte) (data[1] & 0xFF) == (byte) 0x02) {
+        if ((byte) (data[1] & 0xFF) == (byte) 0x02 || (byte) (data[1] & 0xFF) == (byte) 0x03) {
             //设备状态获取返回值
             if ((byte) (data[3] & 0x01) == (byte) 0x01) {     //继电器1吸合状态
                 DataInfo.PowerState = true;
@@ -61,8 +61,6 @@ public class DelayReceiveThread extends Thread {
             if (data[3] == (byte) 0x00) {
                 //定时任务设置成功
                 DataInfo.TimingState = true;
-
-                //Toast
             }
         }
     }

@@ -58,7 +58,7 @@ public class UDPReceiveThread extends Thread {
         if (DataInfo.ConnectionState) {
             //找到当前接收数据的动作类型
             List<Models> list = LitePal.where("model_name = ? and return_data = ?", DataInfo.model_number, data).find(Models.class);
-            Logger.e(list.get(0).getAction_name() + "  " + list.get(0).getAction_type());
+            //Logger.e(list.get(0).getAction_name() + "  " + list.get(0).getAction_type());
             if (!list.isEmpty()) {
                 switch (list.get(0).getAction_type()) {
                     case "CheckConnect":

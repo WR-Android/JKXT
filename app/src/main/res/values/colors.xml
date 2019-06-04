@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="HDMI">#31abe9</color>
+    <color name="DVI">#4dd83c</color>
+    <color name="VGA">#fdcc58</color>
+    <color name="USB">#3accca</color>
+    <color name="CV1">#ee7f3e</color>
+    <color name="CV2">#c254ef</color>
+
+    <color name="mode1">#67FE55</color>
+    <color name="mode2">#FF9E66</color>
+    <color name="mode3">#F4603D</color>
+    <color name="mode4">#60C1FF</color>
+    <color name="mode5">#9F8FFF</color>
+
+
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:linc="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="550dp"
+        android:layout_height="550dp"
+        android:background="@drawable/bg_editinputname"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/textView"
+            style="@style/SettingTitleStyle"
+            android:layout_marginTop="20dp"
+            android:text="自定义端口名" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/LL"
+                android:layout_width="130dp"
+                android:layout_height="350dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <mView.inputButton
+                    android:id="@+id/btn_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    linc:bg_src="@drawable/input"
+                    linc:text="办公室"
+                    linc:text_color="@color/white"
+                    linc:text_size="18sp" />
+
+                <mView.inputButton
+                    android:id="@+id/btn_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:layout_marginTop="10dp"
+                    linc:bg_src="@drawable/input"
+                    linc:text="办公室"
+                    linc:text_color="@color/white"
+                    linc:text_size="18sp" />
+
+                <mView.inputButton
+                    android:id="@+id/btn_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:layout_marginTop="10dp"
+                    linc:bg_src="@drawable/input"
+                    linc:text="办公室"
+                    linc:text_color="@color/white"
+                    linc:text_size="18sp" />
+
+                <mView.inputButton
+                    android:id="@+id/btn_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:layout_marginTop="10dp"
+                    linc:bg_src="@drawable/input"
+                    linc:text="办公室"
+                    linc:text_color="@color/white"
+                    linc:text_size="18sp" />
+
+                <mView.inputButton
+                    android:id="@+id/btn_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:layout_marginTop="10dp"
+                    linc:bg_src="@drawable/input"
+                    linc:text="办公室"
+                    linc:text_color="@color/white"
+                    linc:text_size="18sp" />
+
+                <mView.inputButton
+                    android:id="@+id/btn_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:layout_marginTop="10dp"
+                    linc:bg_src="@drawable/input"
+                    linc:text="办公室"
+                    linc:text_color="@color/white"
+                    linc:text_size="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="58dp"
+                android:orientation="vertical"
+                android:layout_alignTop="@+id/LL"
+                android:layout_alignLeft="@+id/btn_complete"
+                android:layout_alignStart="@+id/btn_complete"
+                android:layout_marginLeft="45dp"
+                android:layout_marginStart="45dp">
+
+                <TextView
+                    style="@style/SettingTextStyle"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="10dp"
+                    android:text="端口自定义名称:" />
+
+                <EditText
+                    android:id="@+id/et_inputName"
+                    style="@style/SettingETStyle"
+                    android:layout_marginLeft="0dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="30dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_default"
+                        style="@style/ConfirmButtonStyle"
+                        android:layout_width="100dp"
+                        android:layout_height="42dp"
+                        android:layout_marginRight="30dp"
+                        android:text="默认" />
+
+                    <Button
+                        android:id="@+id/btn_save"
+                        style="@style/ConfirmButtonStyle"
+                        android:layout_width="100dp"
+                        android:layout_height="42dp"
+                        android:text="保存" />
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_complete"
+                style="@style/ConfirmButtonStyle"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30dp"
+                android:text="完成" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:linc="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/homepagebackground"
     android:orientation="vertical"
     tools:context="wang.com.jkxttest.HomePageActivity">
+
+    <Button
+        android:id="@+id/Cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -121,59 +129,64 @@
                 android:layout_marginRight="50dp"
                 android:orientation="vertical">
 
-                <ImageButton
+                <mView.inputButton
                     android:id="@+id/btn_1"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:background="@color/colorTransparent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/hdmi" />
+                    linc:bg_src="@drawable/input"
+                    linc:text_color="@color/white"
+                    linc:text_size="24sp"
+                     />
 
-                <ImageButton
+                <mView.inputButton
                     android:id="@+id/btn_2"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="20dp"
-                    android:background="@color/colorTransparent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/dvi" />
+                    linc:bg_src="@drawable/input"
+                    linc:text_color="@color/white"
+                    linc:text_size="24sp"
+                     />
 
-                <ImageButton
+                <mView.inputButton
                     android:id="@+id/btn_3"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="20dp"
-                    android:background="@color/colorTransparent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/vga" />
+                    linc:bg_src="@drawable/input"
+                    linc:text_color="@color/white"
+                    linc:text_size="24sp"
+                     />
 
-                <ImageButton
+                <mView.inputButton
                     android:id="@+id/btn_4"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="20dp"
-                    android:background="@color/colorTransparent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/cv1" />
+                    linc:bg_src="@drawable/input"
+                    linc:text_color="@color/white"
+                    linc:text_size="24sp"
+                     />
 
-                <ImageButton
+                <mView.inputButton
                     android:id="@+id/btn_5"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="20dp"
-                    android:background="@color/colorTransparent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/cv2" />
+                    linc:bg_src="@drawable/input"
+                    linc:text_color="@color/white"
+                    linc:text_size="24sp"
+                     />
 
-                <ImageButton
+                <mView.inputButton
                     android:id="@+id/btn_6"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="20dp"
-                    android:background="@color/colorTransparent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/usb" />
-
+                    linc:bg_src="@drawable/input"
+                    linc:text_color="@color/white"
+                    linc:text_size="24sp"
+                     />
 
             </LinearLayout>
 
@@ -286,49 +299,59 @@
                 android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
-                <ImageButton
+                <Button
                     android:id="@+id/btn_mode1"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:background="@color/colorTransparent"
+                    android:background="@drawable/input"
                     android:scaleType="centerInside"
-                    android:src="@drawable/mode1" />
+                    android:text="模式一"
+                    android:textColor="@color/mode1"
+                    android:textSize="24sp" />
 
-                <ImageButton
+                <Button
                     android:id="@+id/btn_mode2"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="30dp"
-                    android:background="@color/colorTransparent"
+                    android:background="@drawable/input"
                     android:scaleType="centerInside"
-                    android:src="@drawable/mode2" />
+                    android:text="模式二"
+                    android:textColor="@color/mode2"
+                    android:textSize="24sp" />
 
-                <ImageButton
+                <Button
                     android:id="@+id/btn_mode3"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="30dp"
-                    android:background="@color/colorTransparent"
+                    android:background="@drawable/input"
                     android:scaleType="centerInside"
-                    android:src="@drawable/mode3" />
+                    android:text="模式三"
+                    android:textColor="@color/mode3"
+                    android:textSize="24sp" />
 
-                <ImageButton
+                <Button
                     android:id="@+id/btn_mode4"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="30dp"
-                    android:background="@color/colorTransparent"
+                    android:background="@drawable/input"
                     android:scaleType="centerInside"
-                    android:src="@drawable/mode4" />
+                    android:text="模式四"
+                    android:textColor="@color/mode4"
+                    android:textSize="24sp" />
 
-                <ImageButton
+                <Button
                     android:id="@+id/btn_mode5"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:layout_marginTop="30dp"
-                    android:background="@color/colorTransparent"
+                    android:background="@drawable/input"
                     android:scaleType="centerInside"
-                    android:src="@drawable/mode5" />
+                    android:text="模式五"
+                    android:textColor="@color/mode5"
+                    android:textSize="24sp" />
 
             </LinearLayout>
 

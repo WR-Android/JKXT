@@ -14,6 +14,7 @@ import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
+import wang.com.jkxttest.HomePageActivity;
 import wang.com.jkxttest.R;
 
 
@@ -89,7 +90,7 @@ public class FromToTimePicker extends LinearLayout {
         }
     };
 
-    private Activity mContext;
+    private Context mContext;
 
     public FromToTimePicker(Context context) {
         this(context, null);
@@ -109,7 +110,7 @@ public class FromToTimePicker extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mContext = (Activity) getContext();
+        mContext = getContext();
         LayoutInflater.from(mContext).inflate(R.layout.timingselect, this);
         mWheelFromHour = findViewById(R.id.from_hour);
         mWheelFromMinute = findViewById(R.id.from_minute);
