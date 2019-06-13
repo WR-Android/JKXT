@@ -12,7 +12,7 @@
 
         <TextView
             style="@style/SettingTitleStyle"
-            android:text="屏保" />
+            android:text="自动休眠" />
 
         <LinearLayout
             style="@style/SettingLinearLayoutStyle"
@@ -21,7 +21,7 @@
 
             <TextView
                 style="@style/SettingTextStyle"
-                android:text="屏保时间：" />
+                android:text="休眠时间：" />
 
             <EditText
                 android:id="@+id/et_ScreenSave"
@@ -48,7 +48,7 @@
             android:layout_gravity="center"
             android:checked="false"
             android:buttonTint="@color/white"
-            android:text="开启屏保"
+            android:text="开启休眠"
             android:textColor="@color/white"
             android:textSize="20sp" />
 

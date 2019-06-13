@@ -52,6 +52,7 @@ public class DataInfo {
     public static final int POWEROFFLINE = 8;
     public static final int COMPLETEEDIT = 9;
 
+    public static boolean NewModel = false;
 
     //用separator分割的字符串 转换成byte数组
     public static byte[] StrToHexByte(String str, String separator) {

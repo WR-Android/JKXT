@@ -216,17 +216,41 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void UpdateInputName() {
+
         SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-        btn_1.setText(sp.getString("input1_Name", DataInfo.input1));
-        btn_2.setText(sp.getString("input2_Name", DataInfo.input2));
-        btn_3.setText(sp.getString("input3_Name", DataInfo.input3));
-        btn_4.setText(sp.getString("input4_Name", DataInfo.input4));
-        btn_5.setText(sp.getString("input5_Name", DataInfo.input5));
-        btn_6.setText(sp.getString("input6_Name", DataInfo.input6));
+        if (DataInfo.NewModel) {
+            btn_1.setText(DataInfo.input1);
+            btn_2.setText(DataInfo.input2);
+            btn_3.setText(DataInfo.input3);
+            btn_4.setText(DataInfo.input4);
+            btn_5.setText(DataInfo.input5);
+            btn_6.setText(DataInfo.input6);
+            DataInfo.input1_Name = DataInfo.input1;
+            DataInfo.input2_Name = DataInfo.input2;
+            DataInfo.input3_Name = DataInfo.input3;
+            DataInfo.input4_Name = DataInfo.input4;
+            DataInfo.input5_Name = DataInfo.input5;
+            DataInfo.input6_Name = DataInfo.input6;
+            sp.edit().putString("input1_Name",DataInfo.input1).apply();
+            sp.edit().putString("input2_Name",DataInfo.input2).apply();
+            sp.edit().putString("input3_Name",DataInfo.input3).apply();
+            sp.edit().putString("input4_Name",DataInfo.input4).apply();
+            sp.edit().putString("input5_Name",DataInfo.input5).apply();
+            sp.edit().putString("input6_Name",DataInfo.input6).apply();
+            DataInfo.NewModel = false;
+        } else {
+            btn_1.setText(sp.getString("input1_Name", DataInfo.input1));
+            btn_2.setText(sp.getString("input2_Name", DataInfo.input2));
+            btn_3.setText(sp.getString("input3_Name", DataInfo.input3));
+            btn_4.setText(sp.getString("input4_Name", DataInfo.input4));
+            btn_5.setText(sp.getString("input5_Name", DataInfo.input5));
+            btn_6.setText(sp.getString("input6_Name", DataInfo.input6));
+        }
 
         // TODO: 2019/6/3 文字颜色跟随端口图案
         //btn_1.setTextColor(getResources().getIdentifier(DataInfo.input1.toLowerCase(),"colors",getPackageName()));
     }
+
 
     private void initView() {
         btn_power = findViewById(R.id.btn_power);   //大屏电源
@@ -424,12 +448,41 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                     showWarningDialog();  //网络继电器开启关闭确认界面
                 break;
             case R.id.btn_sleep:
-                //休眠操作 仅关闭背光源
-                yfapi.yfSetLCDOff();
-                cover.setVisibility(View.VISIBLE);
-                countTimerView.cancel();    //休眠开始，关闭屏保定时器
-                //Toast.makeText(this, "休眠", Toast.LENGTH_SHORT).show();
+                sleep();    //休眠操作 仅关闭背光源
                 break;
+            case R.id.btn_mode1:        //端口切换按钮 1-6
+                ChangeMode("mode1");
+                break;
+            case R.id.btn_mode2:
+                ChangeMode("mode2");
+                break;
+            case R.id.btn_mode3:
+                ChangeMode("mode3");
+                break;
+            case R.id.btn_mode4:
+                ChangeMode("mode4");
+                break;
+            case R.id.btn_mode5:
+                ChangeMode("mode5");
+                break;
+        }
+    }
+
+    private void sleep() {
+        //休眠操作 仅关闭背光源
+        yfapi.yfSetLCDOff();
+        cover.setVisibility(View.VISIBLE);
+        countTimerView.cancel();    //休眠开始，关闭屏保定时器
+    }
+
+    private void ChangeMode(String ModeName) {
+        List<Models> modelsList = LitePal.where("model_name = ? and action_name = ?", DataInfo.model_number, ModeName).find(Models.class);
+        if (!modelsList.isEmpty()) {
+            String str = modelsList.get(0).getSend_data();
+            byte[] data = StrToHexByte(str, "_");
+            UDPThread sendThread = new UDPThread();
+            sendThread.setData(data);
+            sendThread.start();
         }
     }
 
@@ -484,6 +537,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         lockDialog.show(getSupportFragmentManager(), "Lock");
     }
 
+    //屏保
     private void showScreenSaveDialog() {
         ScreenSaveDialog screenSaveDialog = new ScreenSaveDialog();
         screenSaveDialog.show(getSupportFragmentManager(), "ScreenSave");
@@ -516,8 +570,8 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                     case DataInfo.INPUTCONNECTED:   //刷新按钮连接状态
                         connection_input(msg.getData().getString("input"));
                         break;
-                    case DataInfo.SCREENSAVER:  //开启屏保
-                        showScreenSaveDialog();
+                    case DataInfo.SCREENSAVER:  //开启休眠
+                        sleep();
                         break;
                     case DataInfo.POWERCONNECT: //网络继电器开启状态
                         btn_power.setImageResource(R.drawable.on);

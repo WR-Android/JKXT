@@ -101,7 +101,7 @@ public class SetScreenSaveDialog extends DialogFragment implements View.OnClickL
         switch (v.getId()) {
             case R.id.btn_ScreenSave:
                 if (TextUtils.isEmpty(et_screenSave.getText())) {
-                    Toast.makeText(mContext, "屏保时间不能为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "休眠时间不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String s = et_screenSave.getText().toString().trim();
@@ -111,12 +111,12 @@ public class SetScreenSaveDialog extends DialogFragment implements View.OnClickL
                     checked = false;
                 }
                 if (checked) {
-                    Toast.makeText(mContext, "屏保开启", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "自动休眠开启", Toast.LENGTH_SHORT).show();
                     countTimerView.cancel();
                     countTimerView = new CountTimer(Long.parseLong(s) * 1000, 1000, mContext);
                     countTimerView.start();
                 } else {
-                    Toast.makeText(mContext, "屏保关闭", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "自动休眠关闭", Toast.LENGTH_SHORT).show();
                 }
                 DataInfo.ScreenSaveChecked = checked;
                 DataInfo.ScreenSaveTime = s;

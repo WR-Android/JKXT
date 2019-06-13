@@ -75,7 +75,7 @@ public class UDPReceiveThread extends Thread {
                         }
                         break;
                     case "mode":
-                        //接收到模式转换返回值 更新模式按钮颜色
+                        //TODO 接收到模式转换返回值 更新模式按钮颜色
                         break;
                     default:
                         break;
@@ -85,7 +85,12 @@ public class UDPReceiveThread extends Thread {
             //找到返回值对应的设备型号
             List<Models> list = LitePal.where("action_name = ? and return_data = ?", "Device", data).find(Models.class);
             if (!list.isEmpty()) {
-                DataInfo.model_number = list.get(0).getModel_name(); //设置当前连接的设备名称
+                String model_name = list.get(0).getModel_name();
+                if(!model_name.equals(DataInfo.model_number)){
+                    DataInfo.NewModel = true;
+                    //TODO 更新主页面端口名称
+                }
+                DataInfo.model_number = model_name; //设置当前连接的设备名称
                 DataInfo.ConnectionState = true;  //连接成功
                 LastCheckConnectDate = new Date(System.currentTimeMillis());
                 msg.what = DataInfo.NEWCONNECT;

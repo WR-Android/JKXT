@@ -120,7 +120,7 @@
 
                 <TextView
                     style="@style/SettingButtonTextStyle"
-                    android:text="屏保" />
+                    android:text="自动休眠" />
 
             </LinearLayout>
 

@@ -107,7 +107,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         collectDeviceInfo(mContext);
         //保存日志文件
         saveCrashInfo2File(ex);
-        return false; // TODO: 2019/4/23  true 开启logcat保存到文件 WR
+        return true; // TODO: 2019/4/23  true 开启logcat保存到文件 WR
     }
 
     /**
