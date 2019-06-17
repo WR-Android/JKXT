@@ -1,10 +1,14 @@
 package wang.com.jkxttest;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -27,9 +31,21 @@ public class checkActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     String check;//mac地址按des加密后的结果
 
+    public final static int REQUEST_READ_PHONE_STATE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //动态获取权限
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+        } else {
+            //TODO
+        }
+
         // 全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -40,7 +56,16 @@ public class checkActivity extends AppCompatActivity {
         btnReg = findViewById(R.id.btnReg);
         //AndroidID();
 
-        // check= Des.encode(DataInfo.key,getMac()).trim();
+
+        btnReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                regCheck();
+            }
+        });
+    }
+
+    private void AfterGetPermissions(){
         String substr = Md5.md5(AndroidID(), DataInfo.key);
         check = substr.substring(substr.length() - 8, substr.length()).trim();
         sp = this.getSharedPreferences("data", Context.MODE_PRIVATE);
@@ -53,12 +78,21 @@ public class checkActivity extends AppCompatActivity {
             checkActivity.this.startActivity(intent);
             finish();
         }
-        btnReg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                regCheck();
-            }
-        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_READ_PHONE_STATE:
+                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    //TODO
+                    AfterGetPermissions();
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     private String getMac() {
