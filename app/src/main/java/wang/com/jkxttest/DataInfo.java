@@ -6,6 +6,8 @@ package wang.com.jkxttest;
 
 public class DataInfo {
 
+    public static String key="hxsoft";//注册检查的密钥
+
     //数据库的名称
     public final static String DB_NAME = "Agreement.db";
     //数据库的地址

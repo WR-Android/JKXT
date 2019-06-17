@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 
+import me.jessyan.autosize.internal.CancelAdapt;
 import wang.com.jkxttest.R;
 
 import static wang.com.jkxttest.HomePageActivity.TimerRestart;
@@ -25,7 +26,7 @@ import static wang.com.jkxttest.HomePageActivity.TimerRestart;
  * Created by Administrator on 2019/5/29.
  */
 
-public class AboutsDialog extends DialogFragment implements View.OnClickListener {
+public class AboutsDialog extends DialogFragment implements View.OnClickListener{
 
     public Context mContext;
 

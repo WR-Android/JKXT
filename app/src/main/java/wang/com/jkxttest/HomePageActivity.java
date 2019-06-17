@@ -38,6 +38,7 @@ import mThread.TimeThread;
 import mThread.UDPThread;
 import mThread.setTimingThread;
 import mView.inputButton;
+import me.jessyan.autosize.AutoSizeCompat;
 
 import static agreement.CreateDataBase.create_database;
 import static wang.com.jkxttest.DataInfo.StrToHexByte;
