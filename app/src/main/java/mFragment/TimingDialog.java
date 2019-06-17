@@ -78,14 +78,12 @@ public class TimingDialog extends DialogFragment {
                     LitePal.update(TimingLists.class, values, EditFlag);
                 }
                 DataInfo.TimingState = false;//任务更改标志
-                countTimerView.start();
                 dismiss();
                 showTimingListDialog();
             }
 
             @Override
             public void onCancel() {
-                countTimerView.start();
                 dismiss();
                 showTimingListDialog();
             }
@@ -97,6 +95,7 @@ public class TimingDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
+        countTimerView.cancel();
         getDialog().getWindow().setLayout(750, 550);
         getDialog().setCanceledOnTouchOutside(true);
     }
@@ -104,7 +103,7 @@ public class TimingDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        TimerRestart();
+        countTimerView.start();
     }
 
     private void showTimingListDialog() {

@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -84,13 +87,58 @@ public class IpPortDialog extends DialogFragment implements View.OnClickListener
         btn_cancel = view.findViewById(R.id.btn_cancel);
         btn_confirm.setOnClickListener(this);
         btn_cancel.setOnClickListener(this);
+        et_ip.setOnClickListener(this);
+        et_port.setOnClickListener(this);
+        et_delay_ip.setOnClickListener(this);
+
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                TimerRestart();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+        et_ip.addTextChangedListener(textWatcher);
+        et_delay_ip.addTextChangedListener(textWatcher);
+        et_port.addTextChangedListener(textWatcher);
+
+        et_ip.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                TimerRestart();
+                return false;
+            }
+        });
+        et_delay_ip.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                TimerRestart();
+                return false;
+            }
+        });
+        et_port.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                TimerRestart();
+                return false;
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
+        TimerRestart();
         switch (v.getId()) {
             case R.id.btn_confirm:
-                TimerRestart();
                 if (TextUtils.isEmpty(et_ip.getText())) {
                     Toast.makeText(mContext, "IP地址不能为空", Toast.LENGTH_SHORT).show();
                     return;
@@ -115,7 +163,6 @@ public class IpPortDialog extends DialogFragment implements View.OnClickListener
                 dismiss();
                 break;
             case R.id.btn_cancel:
-                TimerRestart();
                 dismiss();
                 break;
         }

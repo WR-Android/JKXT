@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,8 +58,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     private ImageButton btn_abouts;
     private ImageButton btn_sleep;
 
-    private Button cover; //休眠覆盖全屏按钮
-
     private RangeSeekBar sound_seekbar;
     private TextView tv_sound;
     private TextView tv_date;
@@ -78,7 +75,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
 
     private YF_A64_API_Manager yfapi;
-    private GestureDetector mGestureDetector;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,33 +110,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         DataInfo.last_input = DataInfo.input1;
         initTime();//初始化获取当前时间日期
 
-        cover.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return mGestureDetector.onTouchEvent(event);
-            }
-        });
 
-        mGestureDetector = new GestureDetector(HomePageActivity.this, new GestureDetector.SimpleOnGestureListener() {
-
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {//单击事件
-                return super.onSingleTapConfirmed(e);
-            }
-
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {//双击事件
-                cover.setVisibility(View.GONE);
-                countTimerView.start(); //休眠结束，开启定时
-                yfapi.yfSetLCDOn();
-                return super.onDoubleTap(e);
-            }
-
-            @Override
-            public void onLongPress(MotionEvent e) {//长按事件
-                super.onLongPress(e);
-            }
-        });
 
         sound_seekbar.setOnRangeChangedListener(new OnRangeChangedListener() {  //声音滑块数值监听
             @Override
@@ -258,7 +229,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         btn_lock = findViewById(R.id.btn_lock);
         btn_abouts = findViewById(R.id.btn_abouts);
         btn_sleep = findViewById(R.id.btn_sleep);
-        cover = findViewById(R.id.Cover);
         img_connect_state = findViewById(R.id.img_connect_state);
         tv_date = findViewById(R.id.tv_date);
         tv_hour = findViewById(R.id.tv_hour);
@@ -468,10 +438,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    //休眠操作 仅关闭背光源
     private void sleep() {
-        //休眠操作 仅关闭背光源
         yfapi.yfSetLCDOff();
-        cover.setVisibility(View.VISIBLE);
+        showScreenSleepDialog();
         countTimerView.cancel();    //休眠开始，关闭屏保定时器
     }
 
@@ -537,10 +507,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         lockDialog.show(getSupportFragmentManager(), "Lock");
     }
 
-    //屏保
-    private void showScreenSaveDialog() {
+    //休眠
+    private void showScreenSleepDialog() {
         ScreenSaveDialog screenSaveDialog = new ScreenSaveDialog();
-        screenSaveDialog.show(getSupportFragmentManager(), "ScreenSave");
+        screenSaveDialog.show(getSupportFragmentManager(), "Sleep");
     }
 
     private void showAboutsDialog() {
@@ -584,6 +554,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                         break;
                     case DataInfo.COMPLETEEDIT: //端口名称编辑完成
                         UpdateInputName(); //刷新端口名称
+                        break;
+                    case DataInfo.SetLCDOn: //休眠
+                        yfapi.yfSetLCDOn();
                         break;
                     default:
                         break;
@@ -643,6 +616,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     protected void onDestroy() {
         super.onDestroy();
         Logger.e("onDestroy");
+        yfapi.yfSetLCDOn();
         DataInfo.ConnectionState = false;
         DataInfo.DelayConnectionState = false;
         DataInfo.Thread_alive = false;

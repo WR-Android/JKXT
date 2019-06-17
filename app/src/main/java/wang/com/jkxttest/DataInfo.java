@@ -51,6 +51,7 @@ public class DataInfo {
     public static final int POWERDISCONNECT = 7;
     public static final int POWEROFFLINE = 8;
     public static final int COMPLETEEDIT = 9;
+    public static final int SetLCDOn = 10;
 
     public static boolean NewModel = false;
 

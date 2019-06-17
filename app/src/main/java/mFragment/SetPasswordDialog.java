@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,6 +61,36 @@ public class SetPasswordDialog extends DialogFragment implements View.OnClickLis
         //将sp中存储的密码pwd显示
         SharedPreferences sp = mContext.getSharedPreferences("config", MODE_PRIVATE);
         et_lockpwd.setText(sp.getString("pwd", null));
+        et_lockpwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimerRestart();
+            }
+        });
+        et_lockpwd.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                TimerRestart();
+                return false;
+            }
+        });
+
+        et_lockpwd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                TimerRestart();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override

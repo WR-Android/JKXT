@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/img_screenSaveId"
+    <Button
+        android:id="@+id/Cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@mipmap/screensave" />
+        android:background="#000000"
+        />
 
 </RelativeLayout>

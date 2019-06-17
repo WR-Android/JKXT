@@ -100,8 +100,8 @@ public class TimingListDialog extends DialogFragment {
                 viewHolder.setOnClickListener(R.id.btnEdit, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) { //编辑列表中数据
-                        TimerRestart();
                         dismiss();
+                        countTimerView.cancel();
                         showTimingDialog(mDatas.get(position).openTime, mDatas.get(position).closeTime, mData.get(position).timingWeek, mDatas.get(position).id);
                     }
                 });
@@ -113,8 +113,8 @@ public class TimingListDialog extends DialogFragment {
         btn_addTiming.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TimerRestart();
                 dismiss();
+                countTimerView.cancel();
                 showTimingDialog("8:00", "22:00", (char) 0x00, -1);
             }
         });

@@ -19,6 +19,7 @@ import wang.com.jkxttest.R;
 import wang.com.jkxttest.TouchScaleAnim;
 
 import static wang.com.jkxttest.HomePageActivity.TimerRestart;
+import static wang.com.jkxttest.HomePageActivity.countTimerView;
 
 /**
  * Created by Administrator on 2019/5/30.
@@ -95,8 +96,8 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
         TimerRestart();
+        super.onDismiss(dialog);
     }
 
     @Override
@@ -118,9 +119,9 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
                 showSetScreenSaveDialog();
                 break;
             case R.id.setSystem:
-                TimerRestart();
-                getActivity().startActivity(new Intent(Settings.ACTION_SETTINGS));//打开系统设置
                 dismiss();
+                countTimerView.cancel();
+                getActivity().startActivity(new Intent(Settings.ACTION_SETTINGS));//打开系统设置
                 break;
             case R.id.lockonoff:
                 TimerRestart();

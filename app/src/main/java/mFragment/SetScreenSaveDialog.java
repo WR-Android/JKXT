@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -77,9 +80,40 @@ public class SetScreenSaveDialog extends DialogFragment implements View.OnClickL
 
     private void initView(View view) {
         et_screenSave = view.findViewById(R.id.et_ScreenSave);
-        cb_startScreenSave =  view.findViewById(R.id.cb_startScreenSave);
-        btn_screenSave =  view.findViewById(R.id.btn_ScreenSave);
+        cb_startScreenSave = view.findViewById(R.id.cb_startScreenSave);
+        btn_screenSave = view.findViewById(R.id.btn_ScreenSave);
         btn_screenSave.setOnClickListener(this);
+
+        et_screenSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimerRestart();
+            }
+        });
+        et_screenSave.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                TimerRestart();
+                return false;
+            }
+        });
+
+        et_screenSave.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                TimerRestart();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
 

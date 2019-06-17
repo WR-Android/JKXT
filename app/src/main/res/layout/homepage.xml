@@ -9,13 +9,6 @@
     android:orientation="vertical"
     tools:context="wang.com.jkxttest.HomePageActivity">
 
-    <Button
-        android:id="@+id/Cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000000"
-        android:visibility="gone" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

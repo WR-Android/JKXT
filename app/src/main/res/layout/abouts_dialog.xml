@@ -5,10 +5,10 @@
     <LinearLayout
         android:layout_width="600dp"
         android:layout_height="480dp"
-        android:background="@drawable/bg_lock"
-        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:background="@drawable/bg_lock"
+        android:orientation="vertical">
 
         <TextView
             style="@style/SettingTitleStyle"
@@ -17,7 +17,7 @@
 
         <LinearLayout
             android:layout_width="480dp"
-            android:layout_height="wrap_content"
+            android:layout_height="250dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:orientation="vertical">
@@ -53,7 +53,6 @@
 
             <TextView
                 style="@style/SettingTextStyle"
-
                 android:layout_gravity="left"
                 android:text="版权所有：安徽华夏显示技术股份有限公司"
                 android:textSize="25dp" />
@@ -64,7 +63,7 @@
         <Button
             android:id="@+id/abouts_confirm"
             style="@style/ConfirmButtonStyle"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:text="确定" />
 
     </LinearLayout>
