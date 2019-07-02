@@ -37,15 +37,6 @@ public class checkActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //动态获取权限
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
-        } else {
-            //TODO
-        }
-
         // 全屏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -54,8 +45,6 @@ public class checkActivity extends AppCompatActivity {
         textMAc = findViewById(R.id.getMac);
         editpwd = findViewById(R.id.editPwd);
         btnReg = findViewById(R.id.btnReg);
-        //AndroidID();
-
 
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,9 +52,20 @@ public class checkActivity extends AppCompatActivity {
                 regCheck();
             }
         });
+
+        //动态获取权限
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+        } else {
+            //TODO
+            AfterGetPermissions();
+        }
+
     }
 
-    private void AfterGetPermissions(){
+    private void AfterGetPermissions() {
         String substr = Md5.md5(AndroidID(), DataInfo.key);
         check = substr.substring(substr.length() - 8, substr.length()).trim();
         sp = this.getSharedPreferences("data", Context.MODE_PRIVATE);
