@@ -1,6 +1,5 @@
 package wheelView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -10,11 +9,8 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
-
 import java.util.ArrayList;
 
-import wang.com.jkxttest.HomePageActivity;
 import wang.com.jkxttest.R;
 
 
@@ -135,7 +131,7 @@ public class FromToTimePicker extends LinearLayout {
             @Override
             public void onClick(View v) {
                 char rWeek = SelectedWeek();
-                if(rWeek == 0x00){
+                if (rWeek == 0x00) {
                     Toast.makeText(mContext, "星期设置不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }

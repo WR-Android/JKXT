@@ -8,11 +8,13 @@ import org.litepal.LitePal;
 
 public class CreateDataBase {
 
-    public static void create_database() {
+    public static void  create_database() {
         LitePal.getDatabase();
         create_880();
         create_600();
         create_910();
+        create_910p();
+        create_920();
         create_800();
     }
 
@@ -109,6 +111,206 @@ public class CreateDataBase {
 
         data = new Models();
         data.setModel_name("910");
+        data.setAction_name("mode5");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_05_00_00_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+    }
+
+    private static void create_910p() {
+        Models data;
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("Device");
+        data.setAction_type("CheckConnect");
+        data.setSend_data("E9_01_01_00_00_EB_0D_0A");
+        data.setReturn_data("E9_01_01_16_01_02_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("DVI1");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_08_32_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("HDMI");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_01_2B_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("VGA1");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_03_2D_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("VGA2");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_05_2F_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("DVI2");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_06_30_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("DVI3");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_07_31_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("mode1");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_01_00_FC_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("mode2");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_02_00_FD_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("mode3");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_03_00_FE_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("mode4");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_04_00_FF_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("910p");
+        data.setAction_name("mode5");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_05_00_00_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+    }
+
+    private static void create_920() {
+        Models data;
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("Device");
+        data.setAction_type("CheckConnect");
+        data.setSend_data("E9_01_01_00_00_EB_0D_0A");
+        data.setReturn_data("E9_01_01_17_01_03_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("CV1");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_00_2A_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("CV2");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_10_3A_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("VGA1");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_20_4A_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("DVI");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_30_5A_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("VGA2");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_22_4C_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("HDMI");
+        data.setAction_type("input");
+        data.setSend_data("E9_01_40_00_32_5C_0D_0A");
+        data.setReturn_data("E9_01_40_00_FF_29_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("mode1");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_01_00_FC_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("mode2");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_02_00_FD_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("mode3");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_03_00_FE_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
+        data.setAction_name("mode4");
+        data.setAction_type("mode");
+        data.setSend_data("E9_01_11_04_00_FF_0D_0A");
+        data.setReturn_data("E9_01_11_05_FF_FF_0D_0A");
+        data.save();
+
+        data = new Models();
+        data.setModel_name("920");
         data.setAction_name("mode5");
         data.setAction_type("mode");
         data.setSend_data("E9_01_11_05_00_00_0D_0A");

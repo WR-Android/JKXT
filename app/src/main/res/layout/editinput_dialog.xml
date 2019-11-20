@@ -7,10 +7,10 @@
     <LinearLayout
         android:layout_width="550dp"
         android:layout_height="550dp"
-        android:background="@drawable/bg_editinputname"
-        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:background="@drawable/bg_editinputname"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView"
@@ -92,16 +92,51 @@
             </LinearLayout>
 
             <LinearLayout
+                android:layout_width="40dp"
+                android:layout_height="350dp"
+                android:layout_alignTop="@id/LL"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/LL"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/et_No1"
+                    style="@style/InputNumStyle"
+                    android:layout_marginTop="4dp" />
+
+                <EditText
+                    android:id="@+id/et_No2"
+                    style="@style/InputNumStyle" />
+
+                <EditText
+                    android:id="@+id/et_No3"
+                    style="@style/InputNumStyle" />
+
+                <EditText
+                    android:id="@+id/et_No4"
+                    style="@style/InputNumStyle" />
+
+                <EditText
+                    android:id="@+id/et_No5"
+                    style="@style/InputNumStyle" />
+
+                <EditText
+                    android:id="@+id/et_No6"
+                    style="@style/InputNumStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/LL0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="58dp"
-                android:orientation="vertical"
-                android:layout_alignTop="@+id/LL"
                 android:layout_alignLeft="@+id/btn_complete"
                 android:layout_alignStart="@+id/btn_complete"
+                android:layout_alignTop="@+id/LL"
                 android:layout_marginLeft="45dp"
-                android:layout_marginStart="45dp">
+                android:layout_marginStart="45dp"
+                android:layout_marginTop="58dp"
+                android:orientation="vertical">
 
                 <TextView
                     style="@style/SettingTextStyle"
@@ -137,7 +172,6 @@
                         android:text="保存" />
 
                 </LinearLayout>
-
 
 
             </LinearLayout>

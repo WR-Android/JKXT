@@ -1,5 +1,6 @@
 package mFragment;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -21,12 +22,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.litepal.LitePal;
+
+import java.util.List;
+
+import agreement.Models;
 import mView.inputButton;
 import wang.com.jkxttest.DataInfo;
 import wang.com.jkxttest.R;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
+import static wang.com.jkxttest.DataInfo.HexByteToStr;
+import static wang.com.jkxttest.DataInfo.StrToHexByte;
 import static wang.com.jkxttest.HomePageActivity.TimerRestart;
 import static wang.com.jkxttest.HomePageActivity.mHandler;
 
@@ -50,6 +58,14 @@ public class EditInputNameDialog extends DialogFragment implements View.OnClickL
     inputButton btn_4;
     inputButton btn_5;
     inputButton btn_6;
+    private EditText et_No1;
+    private EditText et_No2;
+    private EditText et_No3;
+    private EditText et_No4;
+    private EditText et_No5;
+    private EditText et_No6;
+    private List<Models> InputNumList;
+    private String chars;
 
     @Override
     public void onAttach(Context context) {
@@ -151,6 +167,39 @@ public class EditInputNameDialog extends DialogFragment implements View.OnClickL
         btn_4 = view.findViewById(R.id.btn_4);
         btn_5 = view.findViewById(R.id.btn_5);
         btn_6 = view.findViewById(R.id.btn_6);
+
+        et_No1 = view.findViewById(R.id.et_No1);
+        et_No2 = view.findViewById(R.id.et_No2);
+        et_No3 = view.findViewById(R.id.et_No3);
+        et_No4 = view.findViewById(R.id.et_No4);
+        et_No5 = view.findViewById(R.id.et_No5);
+        et_No6 = view.findViewById(R.id.et_No6);
+
+        InputNumList = LitePal.where("model_name = ? and action_type = ?", DataInfo.model_number, "input").find(Models.class);
+        if (!InputNumList.isEmpty()) {
+            chars = "0123456789ABCDEF";
+            byte[] bytes;
+
+            bytes = StrToHexByte(InputNumList.get(0).getSend_data(), "_");
+            et_No1.setText("" + chars.charAt(Integer.valueOf(bytes[4] >> 4 & 0x0F)) + chars.charAt(Integer.valueOf(bytes[4] & 0x0F)));
+
+            bytes = StrToHexByte(InputNumList.get(1).getSend_data(), "_");
+            et_No2.setText("" + chars.charAt(Integer.valueOf(bytes[4] >> 4 & 0x0F)) + chars.charAt(Integer.valueOf(bytes[4] & 0x0F)));
+
+            bytes = StrToHexByte(InputNumList.get(2).getSend_data(), "_");
+            et_No3.setText("" + chars.charAt(Integer.valueOf(bytes[4] >> 4 & 0x0F)) + chars.charAt(Integer.valueOf(bytes[4] & 0x0F)));
+
+            bytes = StrToHexByte(InputNumList.get(3).getSend_data(), "_");
+            et_No4.setText("" + chars.charAt(Integer.valueOf(bytes[4] >> 4 & 0x0F)) + chars.charAt(Integer.valueOf(bytes[4] & 0x0F)));
+
+            bytes = StrToHexByte(InputNumList.get(4).getSend_data(), "_");
+            et_No5.setText("" + chars.charAt(Integer.valueOf(bytes[4] >> 4 & 0x0F)) + chars.charAt(Integer.valueOf(bytes[4] & 0x0F)));
+
+            bytes = StrToHexByte(InputNumList.get(5).getSend_data(), "_");
+            et_No6.setText("" + chars.charAt(Integer.valueOf(bytes[4] >> 4 & 0x0F)) + chars.charAt(Integer.valueOf(bytes[4] & 0x0F)));
+
+        }
+
         btn_save.setOnClickListener(this);
         btn_default.setOnClickListener(this);
         btn_complete.setOnClickListener(this);
@@ -231,6 +280,8 @@ public class EditInputNameDialog extends DialogFragment implements View.OnClickL
                 defaultName();
                 break;
             case R.id.btn_complete:
+                // TODO: 2019-08-07 获取编号文本框内容，修改数据库
+                changeSQL();
                 dismiss();
                 break;
             case R.id.btn_1:
@@ -264,6 +315,73 @@ public class EditInputNameDialog extends DialogFragment implements View.OnClickL
                 refreshButton();
                 break;
         }
+    }
+
+    private void changeSQL() {
+        Models models;
+        String Str;
+        byte[] bit,bytes;
+        byte b;
+
+        Str = et_No1.getText().toString().trim();
+        bit = Str.getBytes();
+        b = (byte) (chars.indexOf(bit[0]) << 4 | chars.indexOf(bit[1]));
+        bytes = StrToHexByte(InputNumList.get(0).getSend_data(), "_");
+        bytes[4] = b;
+        bytes[5] = (byte) (bytes[0] + bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+        models = new Models();
+        models.setSend_data(HexByteToStr(bytes, DataInfo.agreement_len, "_"));
+        models.update(InputNumList.get(0).getId());
+
+        Str = et_No2.getText().toString().trim();
+        bit = Str.getBytes();
+        b = (byte) (chars.indexOf(bit[0]) << 4 | chars.indexOf(bit[1]));
+        bytes = StrToHexByte(InputNumList.get(1).getSend_data(), "_");
+        bytes[4] = b;
+        bytes[5] = (byte) (bytes[0] + bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+        models = new Models();
+        models.setSend_data(HexByteToStr(bytes, DataInfo.agreement_len, "_"));
+        models.update(InputNumList.get(1).getId());
+
+        Str = et_No3.getText().toString().trim();
+        bit = Str.getBytes();
+        b = (byte) (chars.indexOf(bit[0]) << 4 | chars.indexOf(bit[1]));
+        bytes = StrToHexByte(InputNumList.get(2).getSend_data(), "_");
+        bytes[4] = b;
+        bytes[5] = (byte) (bytes[0] + bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+        models = new Models();
+        models.setSend_data(HexByteToStr(bytes, DataInfo.agreement_len, "_"));
+        models.update(InputNumList.get(2).getId());
+
+        Str = et_No4.getText().toString().trim();
+        bit = Str.getBytes();
+        b = (byte) (chars.indexOf(bit[0]) << 4 | chars.indexOf(bit[1]));
+        bytes = StrToHexByte(InputNumList.get(3).getSend_data(), "_");
+        bytes[4] = b;
+        bytes[5] = (byte) (bytes[0] + bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+        models = new Models();
+        models.setSend_data(HexByteToStr(bytes, DataInfo.agreement_len, "_"));
+        models.update(InputNumList.get(3).getId());
+
+        Str = et_No5.getText().toString().trim();
+        bit = Str.getBytes();
+        b = (byte) (chars.indexOf(bit[0]) << 4 | chars.indexOf(bit[1]));
+        bytes = StrToHexByte(InputNumList.get(4).getSend_data(), "_");
+        bytes[4] = b;
+        bytes[5] = (byte) (bytes[0] + bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+        models = new Models();
+        models.setSend_data(HexByteToStr(bytes, DataInfo.agreement_len, "_"));
+        models.update(InputNumList.get(4).getId());
+
+        Str = et_No6.getText().toString().trim();
+        bit = Str.getBytes();
+        b = (byte) (chars.indexOf(bit[0]) << 4 | chars.indexOf(bit[1]));
+        bytes = StrToHexByte(InputNumList.get(5).getSend_data(), "_");
+        bytes[4] = b;
+        bytes[5] = (byte) (bytes[0] + bytes[1] + bytes[2] + bytes[3] + bytes[4]);
+        models = new Models();
+        models.setSend_data(HexByteToStr(bytes, DataInfo.agreement_len, "_"));
+        models.update(InputNumList.get(5).getId());
     }
 
     private void defaultName() {
