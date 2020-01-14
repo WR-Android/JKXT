@@ -242,7 +242,7 @@ public class EditInputNameDialog extends DialogFragment implements View.OnClickL
     @Override
     public void onStart() {
         super.onStart();
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        getDialog().getWindow().setLayout(900,900);
         getDialog().setCanceledOnTouchOutside(false);
         /**
          * 将对话框外部（未被遮挡的部分）的背景设置为透明（为收起对话框需要）

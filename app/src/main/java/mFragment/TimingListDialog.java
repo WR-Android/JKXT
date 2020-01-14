@@ -133,7 +133,7 @@ public class TimingListDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        getDialog().getWindow().setLayout(750, 550);
+        getDialog().getWindow().setLayout(1000, 800);
         getDialog().setCanceledOnTouchOutside(true);
     }
 

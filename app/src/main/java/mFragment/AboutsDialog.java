@@ -81,7 +81,7 @@ public class AboutsDialog extends DialogFragment implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        getDialog().getWindow().setLayout(800, 700);
         getDialog().setCanceledOnTouchOutside(false);
     }
 

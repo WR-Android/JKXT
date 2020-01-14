@@ -90,7 +90,7 @@ public class SettingDialog extends DialogFragment implements View.OnClickListene
     @Override
     public void onStart() {
         super.onStart();
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        getDialog().getWindow().setLayout(900,700);
         getDialog().setCanceledOnTouchOutside(true);
     }
 

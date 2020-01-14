@@ -96,7 +96,7 @@ public class TimingDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         countTimerView.cancel();
-        getDialog().getWindow().setLayout(750, 550);
+        getDialog().getWindow().setLayout(1000, 800);
         getDialog().setCanceledOnTouchOutside(true);
     }
 

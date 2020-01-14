@@ -33,7 +33,7 @@
                 style="@style/SettingTextStyle"
                 android:layout_gravity="left"
                 android:layout_marginBottom="20dp"
-                android:text="型号：LedView300"
+                android:text="型号：HX-TC600-10"
                 android:textSize="25dp" />
 
             <TextView
